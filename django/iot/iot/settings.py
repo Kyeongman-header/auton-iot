@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-58p$i(9qx0*ehb7b$l5!z!gp_5q)^znfftc$6kd6$@(%b_iiw^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['15.164.39.105','127.0.0.1','10.0.5.235','was-lb-1-1929659241.ap-northeast-2.elb.amazonaws.com','auton-iot.com']
+ALLOWED_HOSTS = ['15.164.39.105','127.0.0.1','10.0.5.*','was-lb-1-1929659241.ap-northeast-2.elb.amazonaws.com','auton-iot.com']
 
 
 # Application definition
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'allow_cidr.middleware.AllowCIDRMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
