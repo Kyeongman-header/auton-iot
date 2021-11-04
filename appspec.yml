@@ -7,3 +7,4 @@ files:
     destination: /home/ubuntu/django
   - source: mosquitto
     destination: /etc/mosquitto
+file_exists_behavior: OVERWRITE
