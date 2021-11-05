@@ -8,3 +8,9 @@ files:
   - source: mosquitto
     destination: /etc/mosquitto
 file_exists_behavior: OVERWRITE
+hooks:
+  BeforeInstall:
+    - location: scripts/KRservertime
+      runas: root
+
+
