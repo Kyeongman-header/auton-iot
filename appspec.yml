@@ -10,7 +10,7 @@ files:
 file_exists_behavior: OVERWRITE
 hooks:
   BeforeInstall:
-    - location: scripts/KRservertime
+    - location: scripts/KRservertime.sh
       runas: root
 
 
