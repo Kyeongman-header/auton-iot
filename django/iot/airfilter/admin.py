@@ -36,5 +36,5 @@ class ThirtyDaysAdmin(admin.ModelAdmin):
 admin.site.register(Machine,MachineAdmin)
 admin.site.register(Sensor,SensorAdmin)
 admin.site.register(AirKorea,AirKoreaAdmin)
-admin.site.register(Seven_Days,SevenDayAdmin)
-admin.site.register(Thirty_Days,ThrityDayAdmin)
+admin.site.register(Seven_Days,SevenDaysAdmin)
+admin.site.register(Thirty_Days,ThrityDaysAdmin)
