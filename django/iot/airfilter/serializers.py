@@ -19,10 +19,10 @@ class AirKoreaSerializer(serializers.ModelSerializer):
 class Seven_Days_Serializer(serializers.ModelSerializer):
     class Meta:
         model=Seven_Days
-        fields=['machine','seven_days_sensor','seven_days_airkorea']
+        fields=['machine','seven_days_sensor','seven_days_airkorea','pub_date']
         
 class Thirty_Days_Serializer(serializers.ModelSerializer):
     class Meta:
         model=Thirty_Days
-        fields=['machine','thirty_days_sensor','thirty_days_airkorea']
+        fields=['machine','thirty_days_sensor','thirty_days_airkorea','pub_date']
         

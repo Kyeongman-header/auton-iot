@@ -39,7 +39,7 @@ def machine(request, id):
 @csrf_exempt
 def latest_sensor(request,id):
 
-    obj = Machine.object.get(id=id).sensor_set.latest('pub_date')
+    obj = Machine.objects.get(id=id).sensor_set.latest('pub_date')
 
     if request.method == 'GET':
         serializer = SensorSerializer(obj)
@@ -57,9 +57,24 @@ def latest_sensor(request,id):
         obj.delete()
         return HttpResponse(status=204)
 
+@csrf_exempt
+def hours_sensor(request,id):
+    obj=Machine.objects.get(id=id).sensor_set.filter(pub_date__gte=datetime.datetime.now()-datetime.timedelta(hours=6))
+    if request.method == 'GET':
+        serializer=SensorSerializer(obj)
+        return JsonResponse(serializer.data,safe=False)
+
+@csrf_exempt
+def hours_airkorea(request,id):
+    obj=Machine.objects.get(id=id).airkorea_set.filter(pub_date__gte=datetime.datetime.now()-datetime.timedelta(hours=6))
+    if request.method=='GET':
+        serializer=SensorSerializer(obj)
+        return JsonResponse(serializer.data,safe=False)
+
+@csrf_exempt
 def latest_airkorea(request,id):
 
-    obj = Machine.object.get(id=id).airkorea_set.latest('pub_date')
+    obj = Machine.objects.get(id=id).airkorea_set.latest('pub_date')
 
     if request.method == 'GET':
         serializer = AirKoreaSerializer(obj)
@@ -77,9 +92,10 @@ def latest_airkorea(request,id):
         obj.delete()
         return HttpResponse(status=204)
 
+@csrf_exempt
 def latest_seven_days(request,id):
 
-    obj = Machine.object.get(id=id).seven_days_set.latest('id')
+    obj = Machine.objects.get(id=id).seven_days_set.all()
 
     if request.method == 'GET':
         serializer = Seven_Days_Serializer(obj)
@@ -99,7 +115,7 @@ def latest_seven_days(request,id):
 
 def latest_thirty_days(request,id):
 
-    obj = Machine.object.get(id=id).thirty_days_set.latest('id')
+    obj = Machine.objects.get(id=id).thirty_days_set.all()
 
     if request.method == 'GET':
         serializer = Thirty_Days_Serializer(obj)

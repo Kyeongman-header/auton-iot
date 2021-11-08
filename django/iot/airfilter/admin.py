@@ -25,12 +25,12 @@ class AirKoreaAdmin(admin.ModelAdmin):
     
 class SevenDaysAdmin(admin.ModelAdmin):
     list_display=('seven_days_sensor','seven_days_airkorea','machine')
-    list_filter=('machine')
+    list_filter=['machine']
     search_fields=['machine']
     
 class ThirtyDaysAdmin(admin.ModelAdmin):
     list_display=('thirty_days_sensor','thirty_days_airkorea','machine')
-    list_filter=('machine')
+    list_filter=['machine']
     search_fields=['machine']
 
 admin.site.register(Machine,MachineAdmin)
