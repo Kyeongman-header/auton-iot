@@ -7,6 +7,8 @@ urlpatterns=[
     path('machine/<int:id>/',views.machine),
     path('latest_sensor/<int:id>/',views.latest_sensor),
     path('latest_airkorea/<int:id>/',views.latest_airkorea),
+    path('6_hours_sensor/<int:id>/',views.hours_sensor),
+    path('6_hours_airkorea/<int:id>/',views.hours_airkorea),
     path('latest_seven_days/<int:id>/',views.latest_seven_days),
     path('latest_thirty_days/<int:id>/',views.latest_thirty_days),
     #path('login/',views.login),

@@ -5,6 +5,7 @@ from .models import *
 from .serializers import *
 from rest_framework.parsers import JSONParser
 from django.contrib.auth import authenticate
+import datetime
 # Create your views here.
 
 @csrf_exempt
@@ -59,16 +60,16 @@ def latest_sensor(request,id):
 
 @csrf_exempt
 def hours_sensor(request,id):
-    obj=Machine.objects.get(id=id).sensor_set.filter(pub_date__gte=datetime.datetime.now()-datetime.timedelta(hours=6))
+    query_set=Machine.objects.get(id=id).sensor_set.filter(pub_date__gte=datetime.datetime.now()-datetime.timedelta(days=1))
     if request.method == 'GET':
-        serializer=SensorSerializer(obj)
+        serializer=SensorSerializer(query_set,many=True)
         return JsonResponse(serializer.data,safe=False)
 
 @csrf_exempt
 def hours_airkorea(request,id):
-    obj=Machine.objects.get(id=id).airkorea_set.filter(pub_date__gte=datetime.datetime.now()-datetime.timedelta(hours=6))
+    query_set=Machine.objects.get(id=id).airkorea_set.filter(pub_date__gte=datetime.datetime.now()-datetime.timedelta(days=1))
     if request.method=='GET':
-        serializer=SensorSerializer(obj)
+        serializer=AirKoreaSerializer(query_set,many=True)
         return JsonResponse(serializer.data,safe=False)
 
 @csrf_exempt
@@ -95,43 +96,19 @@ def latest_airkorea(request,id):
 @csrf_exempt
 def latest_seven_days(request,id):
 
-    obj = Machine.objects.get(id=id).seven_days_set.all()
+    query_set = Machine.objects.get(id=id).seven_days_set.all()
 
     if request.method == 'GET':
-        serializer = Seven_Days_Serializer(obj)
+        serializer = Seven_Days_Serializer(query_set,many=True)
         return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = Seven_Days_Serializer(obj, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'DELETE':
-        obj.delete()
-        return HttpResponse(status=204)
 
 def latest_thirty_days(request,id):
 
-    obj = Machine.objects.get(id=id).thirty_days_set.all()
+    query_set = Machine.objects.get(id=id).thirty_days_set.all()
 
     if request.method == 'GET':
-        serializer = Thirty_Days_Serializer(obj)
+        serializer = Thirty_Days_Serializer(query_set,many=True)
         return JsonResponse(serializer.data, safe=False)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = Thirty_Days_Serializer(obj, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
-
-    elif request.method == 'DELETE':
-        obj.delete()
-        return HttpResponse(status=204)
 
 # AUTH 관련한 것은 TOKEN으로 하기로 했지. 조금 나중에 생각하자.
 #@csrf_exempt

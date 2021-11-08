@@ -39,9 +39,12 @@ ALLOWED_HOSTS.append(['10.0.5.%d' for x in range(256)])
 ALLOWED_HOSTS.append(['10.0.15.%d' for x in range(256)])
 
 # Application definition
+CRONJOBS=[
+        ('* 0 * * *','airfilter.cron.seven_days','>> /tmp/log/seven_day_cron.log'),
+        ('* 0 * * *','airfilter.cron.thirty_days','>> /tmp/log/thirty_day_cron.log'),
+ ]
 
 INSTALLED_APPS = [
-    
     'django_crontab',
     'airfilter.apps.AirfilterConfig',
     'django.contrib.admin',
@@ -128,13 +131,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

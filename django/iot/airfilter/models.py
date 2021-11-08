@@ -14,14 +14,14 @@ class Sensor(models.Model):
     sensor=models.FloatField()
     pub_date=models.DateTimeField('sensor date published',default=now)
     def __str__(self):
-        return self.sensor
+        return str(self.sensor)
 
 class AirKorea(models.Model):
     machine=models.ForeignKey(Machine, on_delete=models.CASCADE)
     airkorea=models.FloatField(max_length=100)
     pub_date=models.DateTimeField('airkor date published',default=now)
     def __str__(self):
-        return self.airkorea
+        return str(self.airkorea)
 
 class Seven_Days(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
