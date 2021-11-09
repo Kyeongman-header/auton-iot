@@ -19,3 +19,5 @@ if [ -e /usr/lib/systemd/system/mqtt_postgres.service ]
 then
 sudo service mqtt_postgres restart
 fi
+
+python3 /home/ubuntu/django/iot/manage.py crontab add
