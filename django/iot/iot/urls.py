@@ -18,6 +18,6 @@ from django.urls import path, include
 from airfilter import views
 
 urlpatterns = [
-    path('airfilter/',include('airfilter.urls')),
+    path('',include('airfilter.urls')),
     path('admin/', admin.site.urls),
 ]

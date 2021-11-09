@@ -34,14 +34,13 @@ SECRET_KEY = 'django-insecure-58p$i(9qx0*ehb7b$l5!z!gp_5q)^znfftc$6kd6$@(%b_iiw^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['15.164.39.105','127.0.0.1','was-lb-1-1929659241.ap-northeast-2.elb.amazonaws.com','auton-iot.com','ec2-13-125-192-128.ap-northeast-2.compute.amazonaws.com']
+ALLOWED_HOSTS = ['15.164.39.105','127.0.0.1','was-lb-1-1929659241.ap-northeast-2.elb.amazonaws.com','auton-iot.com','ec2-52-78-0-40.ap-northeast-2.compute.amazonaws.com']
 ALLOWED_HOSTS.append(['10.0.5.%d' for x in range(256)])
 ALLOWED_HOSTS.append(['10.0.15.%d' for x in range(256)])
 
 # Application definition
 CRONJOBS=[
-        ('* 0 * * *','airfilter.cron.seven_days','>> /tmp/log/seven_day_cron.log'),
-        ('* 0 * * *','airfilter.cron.thirty_days','>> /tmp/log/thirty_day_cron.log'),
+        ('* 0 * * *','airfilter.cron.seven_thirty_days','>> /tmp/cron.log'),
  ]
 
 INSTALLED_APPS = [

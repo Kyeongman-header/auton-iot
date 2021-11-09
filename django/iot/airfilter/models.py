@@ -25,20 +25,16 @@ class AirKorea(models.Model):
 
 class Seven_Days(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
-    seven_days_sensor=ArrayField(models.FloatField(),size=2)
-    seven_days_airkorea=ArrayField(models.FloatField(),size=2)
+    seven_days_sensor_avg=models.FloatField(blank=True,null=True)
+    seven_days_sensor_max=models.FloatField(blank=True,null=True)
+    seven_days_airkorea_avg=models.FloatField(blank=True,null=True)
+    seven_days_airkorea_max=models.FloatField(blank=True,null=True)
     pub_date=models.DateTimeField('Seven days data published',default=now)
-    def get_seven_days_sensor(self):
-        return self.seven_days_sensor
-    def get_seven_days_airkorea(self):
-        return self.seven_days_airkorea
 
 class Thirty_Days(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
-    thirty_days_sensor=ArrayField(ArrayField(models.FloatField(),size=31),size=2)
-    thirty_days_airkorea=ArrayField(ArrayField(models.FloatField(),size=31),size=2)
+    thirty_days_sensor_avg=models.FloatField(blank=True,null=True)
+    thirty_days_sensor_max=models.FloatField(blank=True,null=True)
+    thirty_days_airkorea_avg=models.FloatField(blank=True,null=True)
+    thirty_days_airkorea_max=models.FloatField(blank=True,null=True)
     pub_date=models.DateTimeField('Thirty days data published',default=now)
-    def get_thirty_days_sensor(self):
-        return self.thirty_days_sensor
-    def get_thirty_days_airkorea(self):
-        return self.thirty_days_airkorea

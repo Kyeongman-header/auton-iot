@@ -1,0 +1,7 @@
+<p> This is the REST-API url list. </p>
+
+{% if url_list %}
+	{% for url in url_list %}
+	<p>{{url}}</p>
+	{% endfor %}
+{% endif %}

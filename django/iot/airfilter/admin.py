@@ -8,7 +8,6 @@ from .models import *
 #     extra=3
 
 class MachineAdmin(admin.ModelAdmin):
-    readonly_fields=('id',)
     list_display=('id','car_number','pub_date')
     list_filter=['id','car_number','pub_date']
     search_fields=['id','car_number','pub_date']
@@ -24,12 +23,12 @@ class AirKoreaAdmin(admin.ModelAdmin):
     search_fields=['machine','pub_date','sensor']
     
 class SevenDaysAdmin(admin.ModelAdmin):
-    list_display=('seven_days_sensor','seven_days_airkorea','machine')
+    list_display=('pub_date','seven_days_sensor_avg','seven_days_sensor_max','seven_days_airkorea_avg','seven_days_airkorea_max','machine')
     list_filter=['machine']
     search_fields=['machine']
     
 class ThirtyDaysAdmin(admin.ModelAdmin):
-    list_display=('thirty_days_sensor','thirty_days_airkorea','machine')
+    list_display=('pub_date','thirty_days_sensor_avg','thirty_days_sensor_max','thirty_days_airkorea_avg','thirty_days_airkorea_max','machine')
     list_filter=['machine']
     search_fields=['machine']
 

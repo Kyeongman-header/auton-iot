@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
@@ -7,6 +8,12 @@ from rest_framework.parsers import JSONParser
 from django.contrib.auth import authenticate
 import datetime
 # Create your views here.
+
+
+def index(request):
+    url_list=["machines_list/","machine/기계 아이디","latest_sensor/기계 아이디","latest_airkorea/기계 아이디","today_sensor/기계 아이디","today_airkorea/기계 아이디", "seven_days/기계 아이디", "thirty_days/기계 아이디"]
+    context={'url_list':url_list}
+    return render(request,'airfilter/index.html',context)
 
 @csrf_exempt
 def machines_list(request):
