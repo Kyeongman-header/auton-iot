@@ -13,8 +13,14 @@ hooks:
     - location: scripts/KRservertime.sh
       runas: root
   AfterInstall:
+    - location: scripts/pip_check.sh
+      timeout: 300
+      runas: root      
+  AfterInstall:
     - location: scripts/restart_server.sh
       timeout: 300
       runas: root
+
+
 
 
