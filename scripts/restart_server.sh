@@ -20,4 +20,7 @@ then
 sudo service mqtt_postgres restart
 fi
 
-python3 /home/ubuntu/django/iot/manage.py crontab add
+if [ ! -d /usr/local/lib/python3.8/dist-packages/django_crontab ]
+then
+sudo /usr/bin/python3 /home/ubuntu/django/iot/manage.py crontab add
+fi
