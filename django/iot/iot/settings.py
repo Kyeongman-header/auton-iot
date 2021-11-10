@@ -56,9 +56,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
 ]
+SITE_ID=1
 
 AUTH_USER_MODEL='airfilter.User'
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD=True
+ACCOUNT_EMAIL_REQUIRED=False
+ACCOUNT_UNIQUE_EMAIL=False
+ACCOUNT_USERNAME_REQUIRED=True
+ACCOUNT_AUTHENTICATION_METHOD='username'
+
+
 REST_FRAMEWORK={
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',]
