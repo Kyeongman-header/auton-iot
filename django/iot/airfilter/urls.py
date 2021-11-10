@@ -1,9 +1,19 @@
 from django.urls import path
 from . import views
+from rest_framework.routers import DefaultRouter
 from django.conf.urls import url,include
 
+router=DefaultRouter()
+router.register('machine',MachienVewset)
+router.register('sensor',SensorViewset)
+router.register('airkorea',AirKoreaViewset)
+router.register('seven_days',SevenDaysViewset)
+router.register('thirty_days',ThirtyDaysViewset)
+
+
 urlpatterns=[
-    path('',views.index,name='index'),
+    path('api/',include(router.urls)),
+    path('index/',views.index,name='index'),
     path('machines_list/',views.machines_list),
     path('machine/<int:id>/',views.machine),
     path('latest_sensor/<int:id>/',views.latest_sensor),

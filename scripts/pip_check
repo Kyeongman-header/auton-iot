@@ -36,3 +36,15 @@ then
         printf "django_crontab was not installed in pip. installing that library.\n" >> /tmp/code_deploy_script_checker.log
         pip install django-crontab
 fi
+
+if [ ! -d /usr/local/lib/python3.8/dist-packages/django_filters ]
+then
+	printf "django_filter was not installed in pip. installing that library.\n" >> /tmp/code_deploy_script_checker.log
+	pip install django-filter
+fi
+
+if [ ! -d /usr/local/lib/python3.8/dist-packages/django_rest_auth ]
+then
+	printf "django-rest-auth was not installed in pip. installing that library.\n" >> /tmp/code_deploy_scripts_checker.log
+	pip install django-rest-auth
+fi

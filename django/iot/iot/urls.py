@@ -19,5 +19,6 @@ from airfilter import views
 
 urlpatterns = [
     path('',include('airfilter.urls')),
+    path('rest-auth/',include('rest_auth.urls')),
     path('admin/', admin.site.urls),
 ]

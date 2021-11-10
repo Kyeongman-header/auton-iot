@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .forms import UserChangeForm,UserCreationForm
 from .models import *
 
 # Register your models here.
@@ -6,6 +9,26 @@ from .models import *
 # class SensorInline(admin.TabularInline):
 #     model=Machine
 #     extra=3
+
+
+class UserAdmin(BaseUserAdmin):
+    form=UserChangeForm
+    add_form=UserCreationForm
+
+    list_display=('app','machine','is_admin')
+    list_filter=('is_admin',)
+    fieldsets=(
+            (None,{'fields':('app','machine','password')}),('Machine info', {'fields':('machine',)}),('Permissions',{'fields':('is_admin',)}),
+            )
+    add_fieldsets=(
+            (None,{
+                'classes':('wide',),
+                'fields':('app','machine','password1','password2')}
+                ),
+            )
+    search_fields=('app','machine')
+    ordering=('app')
+    filter_horizontal=()
 
 class MachineAdmin(admin.ModelAdmin):
     list_display=('id','car_number','pub_date')
@@ -32,6 +55,8 @@ class ThirtyDaysAdmin(admin.ModelAdmin):
     list_filter=['machine']
     search_fields=['machine']
 
+admin.site.register(User,UserAdmin)
+admin.site.unregister(Group)
 admin.site.register(Machine,MachineAdmin)
 admin.site.register(Sensor,SensorAdmin)
 admin.site.register(AirKorea,AirKoreaAdmin)

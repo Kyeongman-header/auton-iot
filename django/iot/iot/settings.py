@@ -45,6 +45,9 @@ CRONJOBS=[
 
 INSTALLED_APPS = [
     'django_crontab',
+    'django_filters',
+    'rest_auth',
+    'rest_framework.authtoken',
     'airfilter.apps.AirfilterConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,11 +57,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
 ]
+
+AUTH_USER_MODEL='airfilter.User'
 REST_FRAMEWORK={
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',]
     'DEFAULT_PERMISSION_CLASSES':[
-            'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+            'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
         ]
+    'DEFUALT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
 }
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
