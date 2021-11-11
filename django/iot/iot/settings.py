@@ -44,6 +44,7 @@ CRONJOBS=[
  ]
 
 INSTALLED_APPS = [
+
     'django_crontab',
     'django_filters',
     'rest_auth',
@@ -57,29 +58,38 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'rest_auth.registration',
+ #   'allauth',
+ #   'allauth.account',
+ #   'rest_auth.registration',
 ]
+#JWT_AUTH={
+#    'JWT_SECRET_KEY' : SECRET_KEY,
+#    'JWT_ALGORITHM' : 'HS256',
+#    'JWT_AUTH_HEADER_PREFIX' : 'Token',
+#    'JWT_EXPIRATION_DELTA' : datetime.timedelta(days=7),
+#
+#}
 SITE_ID=1
 
 AUTH_USER_MODEL='airfilter.User'
 
-ACCOUNT_USER_MODEL_USERNAME_FIELD=True
-ACCOUNT_EMAIL_REQUIRED=False
-ACCOUNT_UNIQUE_EMAIL=False
-ACCOUNT_USERNAME_REQUIRED=True
-ACCOUNT_AUTHENTICATION_METHOD='username'
+#ACCOUNT_USER_MODEL_USERNAME_FIELD=True
+#ACCOUNT_EMAIL_REQUIRED=False
+#ACCOUNT_UNIQUE_EMAIL=False
+#ACCOUNT_USERNAME_REQUIRED=True
+#ACCOUNT_AUTHENTICATION_METHOD='username'
+
+
 
 
 REST_FRAMEWORK={
     'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',]
+        'django_filters.rest_framework.DjangoFilterBackend',],
     'DEFAULT_PERMISSION_CLASSES':[
             'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-        ]
+        ],
     'DEFUALT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.TokenAuthentication',]
 }
 
 
