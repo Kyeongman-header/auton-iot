@@ -3,6 +3,16 @@ from django.contrib.postgres.fields import ArrayField
 from django.utils.timezone import now
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
+
+class Machine(models.Model):
+    
+    id=models.BigIntegerField(primary_key=True)
+    car_number=models.CharField(max_length=20)
+    pub_date=models.DateTimeField(default=now) 
+    def __str__(self):
+        return str(self.id)
+
+
 class UserManager(BaseUserManager):
     def create_user(self,app,machine=None,password=None):
         user=self.model(
@@ -39,16 +49,6 @@ class User(AbstractBaseUser):
     def is_staff(self):
         return self.is_admin
 
-
-
-
-class Machine(models.Model):
-    
-    id=models.BigIntegerField(primary_key=True)
-    car_number=models.CharField(max_length=20)
-    pub_date=models.DateTimeField(default=now) 
-    def __str__(self):
-        return str(self.id)
 
 class Sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
