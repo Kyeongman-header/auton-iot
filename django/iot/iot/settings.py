@@ -58,9 +58,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django.contrib.sites',
- #   'allauth',
- #   'allauth.account',
- #   'rest_auth.registration',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
 ]
 #JWT_AUTH={
 #    'JWT_SECRET_KEY' : SECRET_KEY,
@@ -71,14 +71,13 @@ INSTALLED_APPS = [
 #}
 SITE_ID=1
 
-AUTH_USER_MODEL='airfilter.User'
+AUTH_USER_MODEL='airfilter.MyUser'
 
-#ACCOUNT_USER_MODEL_USERNAME_FIELD=True
-#ACCOUNT_EMAIL_REQUIRED=False
+
 #ACCOUNT_UNIQUE_EMAIL=False
 #ACCOUNT_USERNAME_REQUIRED=True
 #ACCOUNT_AUTHENTICATION_METHOD='username'
-
+#ACCOUNT_LOGOUT_ON_GET=True
 
 
 
@@ -89,7 +88,10 @@ REST_FRAMEWORK={
             'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
         ],
     'DEFUALT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',]
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        ]
 }
 
 

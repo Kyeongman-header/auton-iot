@@ -15,19 +15,19 @@ class UserAdmin(BaseUserAdmin):
     form=UserChangeForm
     add_form=UserCreationForm
 
-    list_display=('app','machine','is_admin')
+    list_display=('username','is_admin')
     list_filter=('is_admin',)
     fieldsets=(
-            (None,{'fields':('app','machine','password')}),('Machine info', {'fields':('machine',)}),('Permissions',{'fields':('is_admin',)}),
+            (None,{'fields':('username','password')}),('Permissions',{'fields':('is_admin',)}),
             )
     add_fieldsets=(
             (None,{
                 'classes':('wide',),
-                'fields':('app','machine','password1','password2')}
+                'fields':('username','password1','password2')}
                 ),
             )
-    search_fields=('app','machine')
-    ordering=('app')
+    search_fields=('username',)
+    ordering=('username',)
     filter_horizontal=()
 
 class MachineAdmin(admin.ModelAdmin):
@@ -55,7 +55,7 @@ class ThirtyDaysAdmin(admin.ModelAdmin):
     list_filter=['machine']
     search_fields=['machine']
 
-admin.site.register(User,UserAdmin)
+admin.site.register(MyUser,UserAdmin)
 admin.site.unregister(Group)
 admin.site.register(Machine,MachineAdmin)
 admin.site.register(Sensor,SensorAdmin)

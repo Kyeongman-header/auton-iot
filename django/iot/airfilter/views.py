@@ -1,5 +1,5 @@
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication,SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
@@ -15,30 +15,42 @@ import datetime
 
 # Create your views here.
 
-def new_LoginView(request):
-    if request.method == "GET":
-        return render(reqeust,"airfilter/login.html")
-    elif request.method == "POST":
-        user_id= request.POST.get('user_id')
-        user_pw= request.POST.get('user_pw')
-        user=authenticate(request,username=user_id,password=user_pw)
-        if user is not None :
-            login(request,user=user)
-            return redirect('')
+#def new_LoginView(request):
+#    if request.method == "GET":
+#        return render(reqeust,"airfilter/login.html")
+#    elif request.method == "POST":
+#        user_id= request.POST.get('user_id')
+#        user_pw= request.POST.get('user_pw')
+#        user=authenticate(request,username=user_id,password=user_pw)
+#        if user is not None :
+#            login(request,user=user)
+#            return redirect('')
 
 
-def index(request):
-    url_list=["machines_list/","machine/기계 아이디","latest_sensor/기계 아이디","latest_airkorea/기계 아이디","today_sensor/기계 아이디","today_airkorea/기계 아이디", "seven_days/기계 아이디", "thirty_days/기계 아이디"]
-    context={'url_list':url_list}
-    return render(request,'airfilter/index.html',context)
+#def index(request):
+#    url_list=["machines_list/","machine/기계 아이디","latest_sensor/기계 아이디","latest_airkorea/기계 아이디","today_sensor/기계 아이디","today_airkorea/기계 아이디", "seven_days/기계 아이디", "thirty_days/기계 아이디"]
+#    context={'url_list':url_list}
+#    return render(request,'airfilter/index.html',context)
+
+class MyUserViewset(ModelViewSet):
+    queryset=MyUser.objects.all()
+    serializer_class=MyUserSerializer
+    permission_classes=[IsAdminUser,]
+    authentication_classes=[SessionAuthentication,BasicAuthentication]
+
+
 
 class MachineViewset(ModelViewSet):
-    queryset=Machien.objects.all()
+    queryset=Machine.objects.all()
     serializer_class=MachineSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
-    def perform_create(self,serializer):
-        serializer.save(user=self.request.user)
+    #def get_permissions(self):
+    #    if self.action=='list' or self.action=='retrieve' :
+    #        permission_classes=[IsAuthenticated]
+    #    else :
+    #        permission_classes=[IsAdminUser]
+
 
 class SensorViewset(ModelViewSet):
     queryset=Sensor.objects.all()
@@ -63,9 +75,10 @@ class SevenDaysViewset(ReadOnlyModelViewSet):
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
+
 class ThirtyDaysViewset(ReadOnlyModelViewSet):
     queryset=Thirty_Days.objects.all()
-    serializer_class=ThrityDaysSerializer
+    serializer_class=ThirtyDaysSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
@@ -163,7 +176,7 @@ def latest_seven_days(request,id):
     query_set = Machine.objects.get(id=id).seven_days_set.all()
 
     if request.method == 'GET':
-        serializer = Seven_Days_Serializer(query_set,many=True)
+        serializer = SevenDaysSerializer(query_set,many=True)
         return JsonResponse(serializer.data, safe=False)
 
 def latest_thirty_days(request,id):
@@ -171,7 +184,7 @@ def latest_thirty_days(request,id):
     query_set = Machine.objects.get(id=id).thirty_days_set.all()
 
     if request.method == 'GET':
-        serializer = Thirty_Days_Serializer(query_set,many=True)
+        serializer = ThirtyDaysSerializer(query_set,many=True)
         return JsonResponse(serializer.data, safe=False)
 
 # AUTH 관련한 것은 TOKEN으로 하기로 했지. 조금 나중에 생각하자.
