@@ -5,6 +5,8 @@ import datetime
 import json
 
 import requests
+
+log=open("/tmp/mqtt_postgres.log",'w')
 URL='https://auton-iot.com/'
 Token=''
 
@@ -69,27 +71,29 @@ QOS=1
 
 def on_connect(client,userdata,flags,rc):
     if rc == 0:
-        print("Broker connected")
+        log.write("Broker connected")
         data={'user': 'mqtt_server','password':'ahtmzlxh1234'}
         #POST 방식, JSON은 아님.
         res=requests.get(URL+'rest-auth/api-token-auth/',data=data)
         if res.status_code == 200 :
             Token=res.json()["token"]
-            print(" REST server login success.\n")
+            log.write(" REST server login success.\n")
         else :
-            print(res.status_code + " REST server login error")
-            print(res.text)
+            log.write(res.status_code + " REST server login error")
+            log.write(res.text)
         
     else:
-        print("Broker connection failure : " + str(rc))
+        log.write("Broker connection failure : " + str(rc))
     
 
 def on_disconnect(client, userdata, flags, rc=0):
-    print("disconnection success. "+str(flags)+ "result code : " + str(rc))
+    log.write("disconnection success. "+str(flags)+ "result code : " + str(rc))
+    if log != None :
+        log.close()
 
 
 def on_subscribe(client,userdata,mid,granted_qos):
-    print("subscribed : " + TOPIC + " qos : "+ str(granted_qos))
+    log.write("subscribed : " + TOPIC + " qos : "+ str(granted_qos))
 
 def on_message(client,userdata,msg):
     
@@ -106,24 +110,24 @@ def on_message(client,userdata,msg):
     headers={'Authorization' : token}
     
     if is_add=='1':
-        print("is_add : " + is_add + " car_number : " + sensor_or_car_number + " machine_id : " + machine_id)
+        log.write("is_add : " + is_add + " car_number : " + sensor_or_car_number + " machine_id : " + machine_id)
         data={ "id" : int(machine_id), "car_number" : sensor_or_car_number }
         res=requests.get(URL+'api/machine/',headers=headers,data=data)
         if res.status_code ==201:
-            print( res.status_code + " successfully add machine " + machine_id + " " + res.json()["pub_date"])
+            log.write( res.status_code + " successfully add machine " + machine_id + " " + res.json()["pub_date"])
         else :
-            print( res.status_code + " error add machine. " + machine_id)
-            print( res.text )
+            log.write( res.status_code + " error add machine. " + machine_id)
+            log.write( res.text )
         #postgres_machine_add(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
     else :
-        print("is_add : " + is_add + " sensor : " + sensor_or_car_number + " machine_id : " + machine_id)
+        log.write("is_add : " + is_add + " sensor : " + sensor_or_car_number + " machine_id : " + machine_id)
         data={ "machine" : int(machine_id), "sensor" : int(sensor_or_car_number) }
         res=requests.get(URL+'api/sensor/',headers=headers,data=data)
         if res.status_code == 201:
-            print ( res.status_code + "successfully updating sensor data. " + machine_id + " " + res.json()["pub_date"])
+            log.write( res.status_code + "successfully updating sensor data. " + machine_id + " " + res.json()["pub_date"])
         else :
-            print( res.status_code + "error updating sensor data. " + machine_id)
-            print( res.text )
+            log.write( res.status_code + "error updating sensor data. " + machine_id)
+            log.write( res.text )
         
         #postgres_sensor_insert(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
 
@@ -142,4 +146,5 @@ rc=0
 while rc == 0:
     rc = client.loop()
 
-print("rc: " + str(rc))
+if log != None :
+    log.close()
