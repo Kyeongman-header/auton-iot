@@ -74,7 +74,7 @@ def on_connect(client,userdata,flags,rc):
         log.write("Broker connected")
         data={'user': 'mqtt_server','password':'ahtmzlxh1234'}
         #POST 방식, JSON은 아님.
-        res=requests.get(URL+'api-token-auth/',data=data)
+        res=requests.post(URL+'api-token-auth/',data=data)
         if res.status_code == 200 :
             Token=res.json()["token"]
             log.write(" REST server login success.\n")
@@ -112,7 +112,7 @@ def on_message(client,userdata,msg):
     if is_add=='1':
         log.write("is_add : " + is_add + " car_number : " + sensor_or_car_number + " machine_id : " + machine_id)
         data={ "id" : int(machine_id), "car_number" : sensor_or_car_number }
-        res=requests.get(URL+'api/machine/',headers=headers,data=data)
+        res=requests.post(URL+'api/machine/',headers=headers,data=data)
         if res.status_code ==201:
             log.write( str(res.status_code) + " successfully add machine " + machine_id + " " + str(res.json()["pub_date"]))
         else :
@@ -122,7 +122,7 @@ def on_message(client,userdata,msg):
     else :
         log.write("is_add : " + is_add + " sensor : " + sensor_or_car_number + " machine_id : " + machine_id)
         data={ "machine" : int(machine_id), "sensor" : int(sensor_or_car_number) }
-        res=requests.get(URL+'api/sensor/',headers=headers,data=data)
+        res=requests.post(URL+'api/sensor/',headers=headers,data=data)
         if res.status_code == 201:
             log.write( str(res.status_code) + "successfully updating sensor data. " + machine_id + " " + str(res.json()["pub_date"]))
         else :
