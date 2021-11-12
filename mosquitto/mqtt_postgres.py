@@ -71,7 +71,7 @@ QOS=1
 
 def on_connect(client,userdata,flags,rc):
     if rc == 0:
-        log.write("Broker connected")
+        log.write("Broker connected\n")
         data={'user': 'mqtt_server','password':'ahtmzlxh1234'}
         #POST 방식, JSON은 아님.
         res=requests.post(URL+'api-token-auth/',data=data)
@@ -79,21 +79,21 @@ def on_connect(client,userdata,flags,rc):
             Token=res.json()["token"]
             log.write(" REST server login success.\n")
         else :
-            log.write(str(res.status_code) + " REST server login error")
-            log.write(res.text)
+            log.write(str(res.status_code) + " REST server login error\n")
+            log.write(res.text + '\n')
         
     else:
         log.write("Broker connection failure : " + str(rc))
     
 
 def on_disconnect(client, userdata, flags, rc=0):
-    log.write("disconnection success. "+str(flags)+ "result code : " + str(rc))
+    log.write("disconnection success. "+str(flags)+ "result code : " + str(rc) + '\n')
     if log != None :
         log.close()
 
 
 def on_subscribe(client,userdata,mid,granted_qos):
-    log.write("subscribed : " + TOPIC + " qos : "+ str(granted_qos))
+    log.write("subscribed : " + TOPIC + " qos : "+ str(granted_qos) + '\n')
 
 def on_message(client,userdata,msg):
     
@@ -110,24 +110,24 @@ def on_message(client,userdata,msg):
     headers={'Authorization' : token}
     
     if is_add=='1':
-        log.write("is_add : " + is_add + " car_number : " + sensor_or_car_number + " machine_id : " + machine_id)
+        log.write("is_add : " + is_add + " car_number : " + sensor_or_car_number + " machine_id : " + machine_id + '\n')
         data={ "id" : int(machine_id), "car_number" : sensor_or_car_number }
         res=requests.post(URL+'api/machine/',headers=headers,data=data)
         if res.status_code ==201:
-            log.write( str(res.status_code) + " successfully add machine " + machine_id + " " + str(res.json()["pub_date"]))
+            log.write( str(res.status_code) + " successfully add machine " + machine_id + " " + str(res.json()["pub_date"]) + '\n')
         else :
-            log.write( str(res.status_code) + " error add machine. " + machine_id)
-            log.write( res.text )
+            log.write( str(res.status_code) + " error add machine. " + machine_id + '\n')
+            log.write( res.text + '\n' )
         #postgres_machine_add(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
     else :
-        log.write("is_add : " + is_add + " sensor : " + sensor_or_car_number + " machine_id : " + machine_id)
+        log.write("is_add : " + is_add + " sensor : " + sensor_or_car_number + " machine_id : " + machine_id + '\n')
         data={ "machine" : int(machine_id), "sensor" : int(sensor_or_car_number) }
         res=requests.post(URL+'api/sensor/',headers=headers,data=data)
         if res.status_code == 201:
-            log.write( str(res.status_code) + "successfully updating sensor data. " + machine_id + " " + str(res.json()["pub_date"]))
+            log.write( str(res.status_code) + "successfully updating sensor data. " + machine_id + " " + str(res.json()["pub_date"]) + '\n')
         else :
-            log.write( str(res.status_code) + "error updating sensor data. " + machine_id)
-            log.write( res.text )
+            log.write( str(res.status_code) + "error updating sensor data. " + machine_id + '\n')
+            log.write( res.text + '\n')
         
         #postgres_sensor_insert(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
 
