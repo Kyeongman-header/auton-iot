@@ -74,7 +74,7 @@ def on_connect(client,userdata,flags,rc):
         log.write("Broker connected")
         data={'user': 'mqtt_server','password':'ahtmzlxh1234'}
         #POST 방식, JSON은 아님.
-        res=requests.get(URL+'rest-auth/api-token-auth/',data=data)
+        res=requests.get(URL+'api-token-auth/',data=data)
         if res.status_code == 200 :
             Token=res.json()["token"]
             log.write(" REST server login success.\n")
