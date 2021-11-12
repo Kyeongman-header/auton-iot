@@ -6,7 +6,7 @@ import json
 
 import requests
 
-log=open("/tmp/mqtt_postgres.log",'w')
+log=open("/home/ubuntu/mqtt_postgres.log",'w')
 URL='https://auton-iot.com/'
 Token=''
 
@@ -79,7 +79,7 @@ def on_connect(client,userdata,flags,rc):
             Token=res.json()["token"]
             log.write(" REST server login success.\n")
         else :
-            log.write(res.status_code + " REST server login error")
+            log.write(str(res.status_code) + " REST server login error")
             log.write(res.text)
         
     else:
@@ -114,9 +114,9 @@ def on_message(client,userdata,msg):
         data={ "id" : int(machine_id), "car_number" : sensor_or_car_number }
         res=requests.get(URL+'api/machine/',headers=headers,data=data)
         if res.status_code ==201:
-            log.write( res.status_code + " successfully add machine " + machine_id + " " + res.json()["pub_date"])
+            log.write( str(res.status_code) + " successfully add machine " + machine_id + " " + str(res.json()["pub_date"]))
         else :
-            log.write( res.status_code + " error add machine. " + machine_id)
+            log.write( str(res.status_code) + " error add machine. " + machine_id)
             log.write( res.text )
         #postgres_machine_add(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
     else :
@@ -124,9 +124,9 @@ def on_message(client,userdata,msg):
         data={ "machine" : int(machine_id), "sensor" : int(sensor_or_car_number) }
         res=requests.get(URL+'api/sensor/',headers=headers,data=data)
         if res.status_code == 201:
-            log.write( res.status_code + "successfully updating sensor data. " + machine_id + " " + res.json()["pub_date"])
+            log.write( str(res.status_code) + "successfully updating sensor data. " + machine_id + " " + str(res.json()["pub_date"]))
         else :
-            log.write( res.status_code + "error updating sensor data. " + machine_id)
+            log.write( str(res.status_code) + "error updating sensor data. " + machine_id)
             log.write( res.text )
         
         #postgres_sensor_insert(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
