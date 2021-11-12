@@ -6,7 +6,7 @@ import json
 
 import requests
 
-log=open("/home/ubuntu/mqtt_postgres.log",'w')
+
 URL='https://auton-iot.com/'
 Token=''
 
@@ -70,66 +70,75 @@ QOS=1
 
 
 def on_connect(client,userdata,flags,rc):
-    if rc == 0:
-        log.write("Broker connected\n")
-        data={'user': 'mqtt_server','password':'ahtmzlxh1234'}
-        #POST 방식, JSON은 아님.
-        res=requests.post(URL+'api-token-auth/',data=data)
-        if res.status_code == 200 :
-            Token=res.json()["token"]
-            log.write(" REST server login success.\n")
-        else :
-            log.write(str(res.status_code) + " REST server login error\n")
-            log.write(res.text + '\n')
-        
-    else:
-        log.write("Broker connection failure : " + str(rc))
+    with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
+        if rc == 0:
+            log.write("Broker connected\n")
+            data={'user': 'mqtt_server','password':'ahtmzlxh1234'}
+            #POST 방식, JSON은 아님.
+            res=requests.post(URL+'api-token-auth/',data=data)
+            if res.status_code == 200 :
+                Token=res.json()["token"]
+                log.write(" REST server login success.\n")
+            else :
+                log.write(str(res.status_code) + " REST server login error\n")
+                log.write(res.text + '\n')
+
+        else:
+            log.write("Broker connection failure : " + str(rc))
+        log.write(str(datetime.datetime.now()) + '\n')
     
 
 def on_disconnect(client, userdata, flags, rc=0):
-    log.write("disconnection success. "+str(flags)+ "result code : " + str(rc) + '\n')
-    if log != None :
+    with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
+        log.write("disconnection success. "+str(flags)+ "result code : " + str(rc) + '\n')
+        log.write(str(datetime.datetime.now()) + '\n')
         log.close()
+            
 
 
 def on_subscribe(client,userdata,mid,granted_qos):
-    log.write("subscribed : " + TOPIC + " qos : "+ str(granted_qos) + '\n')
+    with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
+        log.write("subscribed : " + TOPIC + " qos : "+ str(granted_qos) + '\n')
+        
+        log.write(str(datetime.datetime.now()) + '\n')
 
 def on_message(client,userdata,msg):
     
     # 실제로는 json data로 받고 sensor와 car_number를 더 쉽게 파싱할 수 있음.
     # 지금은 0 번째 숫자로 추가인지 아닌지 가리고, 1,2번째 숫자가 sensor값(혹은 차 넘버),
     #3번째 숫자가 machine 고유 번호임.
-    
-    data=str(msg.payload.decode("utf-8"))
-    is_add=data[0]
-    sensor_or_car_number=data[1:3]
-    machine_id=data[3:]
-    token='Token ' + Token
-    
-    headers={'Authorization' : token}
-    
-    if is_add=='1':
-        log.write("is_add : " + is_add + " car_number : " + sensor_or_car_number + " machine_id : " + machine_id + '\n')
-        data={ "id" : int(machine_id), "car_number" : sensor_or_car_number }
-        res=requests.post(URL+'api/machine/',headers=headers,data=data)
-        if res.status_code ==201:
-            log.write( str(res.status_code) + " successfully add machine " + machine_id + " " + str(res.json()["pub_date"]) + '\n')
+    with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
+        data=str(msg.payload.decode("utf-8"))
+        is_add=data[0]
+        sensor_or_car_number=data[1:3]
+        machine_id=data[3:]
+        token='Token ' + Token
+
+        headers={'Authorization' : token}
+
+        if is_add=='1':
+            log.write("is_add : " + is_add + " car_number : " + sensor_or_car_number + " machine_id : " + machine_id + '\n')
+            data={ "id" : int(machine_id), "car_number" : sensor_or_car_number }
+            res=requests.post(URL+'api/machine/',headers=headers,data=data)
+            if res.status_code ==201:
+                log.write( str(res.status_code) + " successfully add machine " + machine_id + " " + str(res.json()["pub_date"]) + '\n')
+            else :
+                log.write( str(res.status_code) + " error add machine. " + machine_id + '\n')
+                log.write( res.text + '\n' )
+            #postgres_machine_add(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
         else :
-            log.write( str(res.status_code) + " error add machine. " + machine_id + '\n')
-            log.write( res.text + '\n' )
-        #postgres_machine_add(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
-    else :
-        log.write("is_add : " + is_add + " sensor : " + sensor_or_car_number + " machine_id : " + machine_id + '\n')
-        data={ "machine" : int(machine_id), "sensor" : int(sensor_or_car_number) }
-        res=requests.post(URL+'api/sensor/',headers=headers,data=data)
-        if res.status_code == 201:
-            log.write( str(res.status_code) + "successfully updating sensor data. " + machine_id + " " + str(res.json()["pub_date"]) + '\n')
-        else :
-            log.write( str(res.status_code) + "error updating sensor data. " + machine_id + '\n')
-            log.write( res.text + '\n')
-        
-        #postgres_sensor_insert(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
+            log.write("is_add : " + is_add + " sensor : " + sensor_or_car_number + " machine_id : " + machine_id + '\n')
+            data={ "machine" : int(machine_id), "sensor" : int(sensor_or_car_number) }
+            res=requests.post(URL+'api/sensor/',headers=headers,data=data)
+            if res.status_code == 201:
+                log.write( str(res.status_code) + "successfully updating sensor data. " + machine_id + " " + str(res.json()["pub_date"]) + '\n')
+            else :
+                log.write( str(res.status_code) + "error updating sensor data. " + machine_id + '\n')
+                log.write( res.text + '\n')
+                
+        log.write(str(datetime.datetime.now()) + '\n')
+
+            #postgres_sensor_insert(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
 
 client=mqtt.Client()
 client.on_connect=on_connect
@@ -145,6 +154,8 @@ client.subscribe(TOPIC,QOS)
 rc=0
 while rc == 0:
     rc = client.loop()
-
-if log != None :
+    
+with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
+    log.write("end of python code.\n")
+    log.write(str(datetime.datetime.now()) + '\n')
     log.close()
