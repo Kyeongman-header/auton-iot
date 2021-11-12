@@ -1,7 +1,12 @@
 import paho.mqtt.client as mqtt
 import psycopg2 as pg2
 import datetime
+
 import json
+
+import requests
+URL='https://auton-iot.com/'
+Token=''
 
 HOST='localhost'
 USER='user'
@@ -9,63 +14,75 @@ PASSWORD='1234'
 PORT=8883
 TOPIC='auton'
 QOS=1
-DB_HOST='10.0.10.161'
-DB='iot'
-DB_USER='auton'
-DB_PASSWORD='mypassword'
 
-def postgres_machine_add(host,user,password,db,car_number,machine_id):
-    try:
-        conn=pg2.connect(host=host,dbname=db,user=user,password=password)
-    except Exception as e:
-        print("-----------------\n postgre sql connection error :( \n ---------------------")
-        print(e)
-        return
-    cur=conn.cursor()
-    query=f"INSERT INTO airfilter_machine(id,car_number,pub_date) VALUES ({machine_id} {car_number},current_timestamp)"
-    try :
-        cur.execute("INSERT INTO airfilter_machine(id,car_number,pub_date) VALUES (%s, %s,current_timestamp)",(machine_id,car_number))
-        conn.commit()
-    except pg2.DatabaseError as dberror:
-        print("-----------------------\m insert query to machine table error :(\n ----------------------")
-        print(dberror)
-        conn.rollback()
-    else :
-        print("insert success")
-        print(query)
-    conn.close()
+# DB_HOST='10.0.10.161'
+# DB='iot'
+# DB_USER='auton'
+# DB_PASSWORD='mypassword'
 
-def postgres_sensor_insert(host,user,password,db,sensor,machine_id):
-    try:
-        conn=pg2.connect(host=host,dbname=db,user=user,password=password)
-    except Exception as e:
-        print("-----------------\npostgre sql connection error :(\n--------------------")
-        print(e)
-        return
+# def postgres_machine_add(host,user,password,db,car_number,machine_id):
+#     try:
+#         conn=pg2.connect(host=host,dbname=db,user=user,password=password)
+#     except Exception as e:
+#         print("-----------------\n postgre sql connection error :( \n ---------------------")
+#         print(e)
+#         return
+#     cur=conn.cursor()
+#     query=f"INSERT INTO airfilter_machine(id,car_number,pub_date) VALUES ({machine_id} {car_number},current_timestamp)"
+#     try :
+#         cur.execute("INSERT INTO airfilter_machine(id,car_number,pub_date) VALUES (%s, %s,current_timestamp)",(machine_id,car_number))
+#         conn.commit()
+#     except pg2.DatabaseError as dberror:
+#         print("-----------------------\m insert query to machine table error :(\n ----------------------")
+#         print(dberror)
+#         conn.rollback()
+#     else :
+#         print("insert success")
+#         print(query)
+#     conn.close()
 
-    cur=conn.cursor()
-    n=datetime.datetime.now()
-    query=f"INSERT INTO airfilter_sensor VALUES ('{sensor}','{n}','{machine_id}')"
+# def postgres_sensor_insert(host,user,password,db,sensor,machine_id):
+#     try:
+#         conn=pg2.connect(host=host,dbname=db,user=user,password=password)
+#     except Exception as e:
+#         print("-----------------\npostgre sql connection error :(\n--------------------")
+#         print(e)
+#         return
+
+#     cur=conn.cursor()
+#     n=datetime.datetime.now()
+#     query=f"INSERT INTO airfilter_sensor VALUES ('{sensor}','{n}','{machine_id}')"
     
-    try :
-        cur.execute("INSERT INTO airfilter_sensor (machine_id,sensor,pub_date)VALUES (%s, %s, current_timestamp)",(machine_id,sensor))
-        conn.commit()
-    except pg2.DatabaseError as dberror:
-        print("------------------------\ninsert query to sensor table error :(\n-----------------------")
-        print(dberror)
-        conn.rollback()
-    else :
-        print("insert success : ")
-        print(query)
+#     try :
+#         cur.execute("INSERT INTO airfilter_sensor (machine_id,sensor,pub_date)VALUES (%s, %s, current_timestamp)",(machine_id,sensor))
+#         conn.commit()
+#     except pg2.DatabaseError as dberror:
+#         print("------------------------\ninsert query to sensor table error :(\n-----------------------")
+#         print(dberror)
+#         conn.rollback()
+#     else :
+#         print("insert success : ")
+#         print(query)
 
-    conn.close()
+#     conn.close()
 
 
 def on_connect(client,userdata,flags,rc):
     if rc == 0:
         print("Broker connected")
+        data={'user': 'mqtt_server','password':'ahtmzlxh1234'}
+        #POST 방식, JSON은 아님.
+        res=requests.get(URL+'rest-auth/api-token-auth/',data=data)
+        if res.status_code == 200 :
+            Token=res.json()["token"]
+            print(" REST server login success.\n")
+        else :
+            print(res.status_code + " REST server login error")
+            print(res.text)
+        
     else:
         print("Broker connection failure : " + str(rc))
+    
 
 def on_disconnect(client, userdata, flags, rc=0):
     print("disconnection success. "+str(flags)+ "result code : " + str(rc))
@@ -84,13 +101,31 @@ def on_message(client,userdata,msg):
     is_add=data[0]
     sensor_or_car_number=data[1:3]
     machine_id=data[3:]
-
+    token='Token ' + Token
+    
+    headers={'Authorization' : token}
+    
     if is_add=='1':
         print("is_add : " + is_add + " car_number : " + sensor_or_car_number + " machine_id : " + machine_id)
-        postgres_machine_add(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
+        data={ "id" : int(machine_id), "car_number" : sensor_or_car_number }
+        res=requests.get(URL+'api/machine/',headers=headers,data=data)
+        if res.status_code ==201:
+            print( res.status_code + " successfully add machine " + machine_id + " " + res.json()["pub_date"])
+        else :
+            print( res.status_code + " error add machine. " + machine_id)
+            print( res.text )
+        #postgres_machine_add(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
     else :
         print("is_add : " + is_add + " sensor : " + sensor_or_car_number + " machine_id : " + machine_id)
-        postgres_sensor_insert(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
+        data={ "machine" : int(machine_id), "sensor" : int(sensor_or_car_number) }
+        res=requests.get(URL+'api/sensor/',headers=headers,data=data)
+        if res.status_code == 201:
+            print ( res.status_code + "successfully updating sensor data. " + machine_id + " " + res.json()["pub_date"])
+        else :
+            print( res.status_code + "error updating sensor data. " + machine_id)
+            print( res.text )
+        
+        #postgres_sensor_insert(DB_HOST,DB_USER,DB_PASSWORD,DB,sensor_or_car_number,machine_id)
 
 client=mqtt.Client()
 client.on_connect=on_connect
