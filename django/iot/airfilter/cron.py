@@ -2,7 +2,9 @@ from .models import *
 from django.db.models import Avg, Max
 import datetime
 from .lists import sensor_list
-
+from django.db.models.functions import Cast
+from django.db.models import FloatField
+from django.contrib.postgres.fields.jsonb import KeyTextTransform
 
 def seven_thirty_days():
     print("test")
@@ -37,15 +39,15 @@ def seven_days(id):
         seven_days_airkorea_avg_json={}
         seven_days_airkorea_max_json={}
         
-        for i in sensor_list:
-            avg_sensor=sensors.annotate(i=Cast(KeyTextTransform(i, 'sensor'),FloatField())).aggregate(Avg(i))['float_val__avg']
-            max_sensor=sensors.annotate(i=Cast(KeyTextTransform(i, 'sensor'),FloatField())).aggregate(Max(i))['float_val__max']
-            avg_airkorea=airkoreas.annotate(i=Cast(KeyTextTransform(i, 'airkorea'),FloatField())).aggregate(Avg(i))['airkorea__avg']
-            max_airkorea=airkoreas.annotate(i=Cast(KeyTextTransform(i, 'airkorea'),FloatField())).aggregate(Max(i))['airkorea__avg']
-            seven_days_sensor_avg_json[i] = avg_sensor
-            seven_days_sensor_max_json[i] = max_sensor
-            seven_days_airkorea_avg_json[i] = avg_airkorea
-            seven_days_airkorea_max_json[i] = avg_airkorea
+        for s in sensor_list:
+            avg_sensor=sensors.annotate(float_val=Cast(KeyTextTransform(s, 'sensor'),FloatField())).aggregate(Avg('float_val'))['float_val__avg']
+            max_sensor=sensors.annotate(float_val=Cast(KeyTextTransform(s, 'sensor'),FloatField())).aggregate(Max('float_val'))['float_val__max']
+            avg_airkorea=airkoreas.annotate(float_val=Cast(KeyTextTransform(s, 'airkorea'),FloatField())).aggregate(Avg('float_val'))['float_val__avg']
+            max_airkorea=airkoreas.annotate(float_val=Cast(KeyTextTransform(s, 'airkorea'),FloatField())).aggregate(Max('float_val'))['float_val__max']
+            seven_days_sensor_avg_json[s] = avg_sensor
+            seven_days_sensor_max_json[s] = max_sensor
+            seven_days_airkorea_avg_json[s] = avg_airkorea
+            seven_days_airkorea_max_json[s] = max_airkorea
             
         m.seven_days_set.create(seven_days_sensor_avg=seven_days_sensor_avg_json,seven_days_sensor_max=seven_days_sensor_max_json,seven_days_airkorea_avg=seven_days_airkorea_avg_json,seven_days_airkorea_max=seven_days_airkorea_max_json,pub_date=sensors.first().pub_date)
         m.save()
@@ -78,17 +80,17 @@ def thirty_days(id):
         thirty_days_airkorea_avg_json={}
         thirty_days_airkorea_max_json={}
         
-        for i in sensor_list:
-            avg_sensor=sensors.annotate(i=Cast(KeyTextTransform(i, 'sensor'),FloatField())).aggregate(Avg(i))['float_val__avg']
-            max_sensor=sensors.annotate(i=Cast(KeyTextTransform(i, 'sensor'),FloatField())).aggregate(Max(i))['float_val__max']
-            avg_airkorea=airkoreas.annotate(i=Cast(KeyTextTransform(i, 'airkorea'),FloatField())).aggregate(Avg(i))['airkorea__avg']
-            max_airkorea=airkoreas.annotate(i=Cast(KeyTextTransform(i, 'airkorea'),FloatField())).aggregate(Max(i))['airkorea__avg']
-            thirty_days_sensor_avg_json[i] = avg_sensor
-            thirty_days_sensor_max_json[i] = max_sensor
-            thirty_days_airkorea_avg_json[i] = avg_airkorea
-            thirty_days_airkorea_max_json[i] = avg_airkorea
+        for s in sensor_list:
+            avg_sensor=sensors.annotate(float_val=Cast(KeyTextTransform(s, 'sensor'),FloatField())).aggregate(Avg('float_val'))['float_val__avg']
+            max_sensor=sensors.annotate(float_val=Cast(KeyTextTransform(s, 'sensor'),FloatField())).aggregate(Max('float_val'))['float_val__max']
+            avg_airkorea=airkoreas.annotate(float_val=Cast(KeyTextTransform(s, 'airkorea'),FloatField())).aggregate(Avg('float_val'))['float_val__avg']
+            max_airkorea=airkoreas.annotate(float_val=Cast(KeyTextTransform(s, 'airkorea'),FloatField())).aggregate(Max('float_val'))['float_val__max']
+            thirty_days_sensor_avg_json[s] = avg_sensor
+            thirty_days_sensor_max_json[s] = max_sensor
+            thirty_days_airkorea_avg_json[s] = avg_airkorea
+            thirty_days_airkorea_max_json[s] = max_airkorea
             
-        m.seven_days_set.create(thirty_days_sensor_avg=thirty_days_sensor_avg_json,thirty_days_sensor_max=thirty_days_sensor_max_json,thirty_days_airkorea_avg=thirty_days_airkorea_avg_json,thirty_days_airkorea_max=thirty_days_airkorea_max_json,pub_date=sensors.first().pub_date)
+        m.thirty_days_set.create(thirty_days_sensor_avg=thirty_days_sensor_avg_json,thirty_days_sensor_max=thirty_days_sensor_max_json,thirty_days_airkorea_avg=thirty_days_airkorea_avg_json,thirty_days_airkorea_max=thirty_days_airkorea_max_json,pub_date=sensors.first().pub_date)
         
         m.save()
         print(f"thirty_days_cron : {i} week, data stored successfully on {now}\n") 
