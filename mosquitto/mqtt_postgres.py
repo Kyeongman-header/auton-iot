@@ -31,16 +31,16 @@ def postgres_machine_add(host,user,password,db,car_number,machine_id):
     cur=conn.cursor()
     query=f"INSERT INTO airfilter_machine(id,car_number,pub_date) VALUES ({machine_id}, {car_number},current_timestamp)"
     try :
-        cur.execute("INSERT INTO airfilter_machine(id,car_number,pub_date) VALUES (%s, %s,current_timestamp)",(machine_id,car_number))
+        cur.execute("INSERT INTO airfilter_machine(id,car_number,pub_date) VALUES (%s, %s,current_timestamp)",(str(machine_id),str(car_number)))
         conn.commit()
     except pg2.DatabaseError as dberror:
         with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
-            log.write("-----------------------\m insert query to machine table error :(\n ----------------------")
+            log.write("-----------------------\n insert query to machine table error :(\n ----------------------")
             log.write(dberror)
             conn.rollback()
     else :
         with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
-            log.write("insert success")
+            log.write("insert success \n")
             log.write(query)
             
     conn.close()
@@ -51,7 +51,7 @@ def postgres_sensor_insert(host,user,password,db,sensor,machine_id):
     except Exception as e:
         with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
             with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
-                log.write("-----------------\npostgre sql connection error :(\n--------------------")
+                log.write("-----------------\n postgre sql connection error :(\n--------------------")
                 log.write(e)
         return
 
@@ -60,7 +60,7 @@ def postgres_sensor_insert(host,user,password,db,sensor,machine_id):
     query=f"INSERT INTO airfilter_sensor (machine_id,sensor,pub_date) VALUES ('{machine_id}', '{sensor}',current_timestamp)"
     
     try :
-        cur.execute("INSERT INTO airfilter_sensor (machine_id,sensor,pub_date) VALUES (%s, %s, current_timestamp)",(machine_id,sensor))
+        cur.execute("INSERT INTO airfilter_sensor (machine_id,sensor,pub_date) VALUES (%s, %s, current_timestamp)",(str(machine_id),str(sensor)))
         conn.commit()
     except pg2.DatabaseError as dberror:
         with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
@@ -69,7 +69,7 @@ def postgres_sensor_insert(host,user,password,db,sensor,machine_id):
             conn.rollback()
     else :
         with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
-            log.write("insert success : ")
+            log.write("insert success : \n")
             log.write(query)
 
     conn.close()
@@ -123,8 +123,8 @@ def on_message(client,userdata,msg):
         #token='Token ' + Token
         #headers={'Authorization' : token}
         
-        if is_add=='1':
-            log.write("is_add : " + is_add + " car_number : " + car_number + " machine_id : " + machine_id + '\n')
+        if is_add==1:
+            #log.write("is_add : " + is_add + " car_number : " + car_number + " machine_id : " + machine_id + '\n')
             postgres_machine_add(DB_HOST,DB_USER,DB_PASSWORD,DB,car_number,machine_id)
 #             data={ "id" : int(machine_id), "car_number" : sensor_or_car_number }
 #             res=requests.post(URL+'api/machine/',headers=headers,data=data)
@@ -135,7 +135,7 @@ def on_message(client,userdata,msg):
 #                 log.write( res.text + '\n' )
 
         else :
-            log.write("is_add : " + is_add + " sensor : " + json.dumps(sensor) + " machine_id : " + machine_id + '\n')
+            #log.write("is_add : " + is_add + " sensor : " + json.dumps(sensor) + " machine_id : " + machine_id + '\n')
             postgres_sensor_insert(DB_HOST,DB_USER,DB_PASSWORD,DB,json.dumps(sensor),machine_id)
 #             data={ "machine" : int(machine_id), "sensor" : int(sensor_or_car_number) }
 #             res=requests.post(URL+'api/sensor/',headers=headers,data=data)
