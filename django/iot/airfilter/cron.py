@@ -1,7 +1,7 @@
 from .models import *
 from django.db.models import Avg, Max
 import datetime
-
+from .lists import sensor_list
 
 
 def seven_thirty_days():
@@ -32,12 +32,22 @@ def seven_days(id):
             m.save()
             print(f"seven_days_cron : {i} day does not exists\n")
             continue
-        avg_sensor=sensors.aggregate(Avg('sensor'))['sensor__avg']
-        max_sensor=sensors.aggregate(Max('sensor'))['sensor__max']
-        avg_airkorea=airkoreas.aggregate(Avg('airkorea'))['airkorea__avg']
-        max_airkorea=airkoreas.aggregate(Max('airkorea'))['airkorea__max']
-
-        m.seven_days_set.create(seven_days_sensor_avg=avg_sensor,seven_days_sensor_max=max_sensor,seven_days_airkorea_avg=avg_airkorea,seven_days_airkorea_max=max_airkorea,pub_date=sensors.first().pub_date)
+        seven_days_sensor_avg_json={}
+        seven_days_sensor_max_json={}
+        seven_days_airkorea_avg_json={}
+        seven_days_airkorea_max_json={}
+        
+        for i in sensor_list:
+            avg_sensor=sensors.annotate(i=Cast(KeyTextTransform(i, 'sensor'),FloatField())).aggregate(Avg(i))['float_val__avg']
+            max_sensor=sensors.annotate(i=Cast(KeyTextTransform(i, 'sensor'),FloatField())).aggregate(Max(i))['float_val__max']
+            avg_airkorea=airkoreas.annotate(i=Cast(KeyTextTransform(i, 'airkorea'),FloatField())).aggregate(Avg(i))['airkorea__avg']
+            max_airkorea=airkoreas.annotate(i=Cast(KeyTextTransform(i, 'airkorea'),FloatField())).aggregate(Max(i))['airkorea__avg']
+            seven_days_sensor_avg_json[i] = avg_sensor
+            seven_days_sensor_max_json[i] = max_sensor
+            seven_days_airkorea_avg_json[i] = avg_airkorea
+            seven_days_airkorea_max_json[i] = avg_airkorea
+            
+        m.seven_days_set.create(seven_days_sensor_avg=seven_days_sensor_avg_json,seven_days_sensor_max=seven_days_sensor_max_json,seven_days_airkorea_avg=seven_days_airkorea_avg_json,seven_days_airkorea_max=seven_days_airkorea_max_json,pub_date=sensors.first().pub_date)
         m.save()
         print(f"seven_days_cron : {i} day, data stored successfully on {now}\n")
 
@@ -62,11 +72,24 @@ def thirty_days(id):
             m.save()
             print(f"thirty_days_cron : {i} week does not exists.\n")
             continue
-        avg_sensor=sensors.aggregate(Avg('sensor'))['sensor__avg']
-        avg_airkorea=airkoreas.aggregate(Avg('airkorea'))['airkorea__avg']
-        Max_sensor=sensors.aggregate(Max('sensor'))['sensor__max']
-        Max_airkorea=airkoreas.aggregate(Max('airkorea'))['airkorea__max']
-        m.thirty_days_set.create(thirty_days_sensor_avg=avg_sensor,thirty_days_sensor_max=Max_sensor,thirty_days_airkorea_avg=avg_airkorea,thirty_days_airkorea_max=Max_airkorea,pub_date=sensors.first().pub_date)
+      
+        thirty_days_sensor_avg_json={}
+        thirty_days_sensor_max_json={}
+        thirty_days_airkorea_avg_json={}
+        thirty_days_airkorea_max_json={}
+        
+        for i in sensor_list:
+            avg_sensor=sensors.annotate(i=Cast(KeyTextTransform(i, 'sensor'),FloatField())).aggregate(Avg(i))['float_val__avg']
+            max_sensor=sensors.annotate(i=Cast(KeyTextTransform(i, 'sensor'),FloatField())).aggregate(Max(i))['float_val__max']
+            avg_airkorea=airkoreas.annotate(i=Cast(KeyTextTransform(i, 'airkorea'),FloatField())).aggregate(Avg(i))['airkorea__avg']
+            max_airkorea=airkoreas.annotate(i=Cast(KeyTextTransform(i, 'airkorea'),FloatField())).aggregate(Max(i))['airkorea__avg']
+            thirty_days_sensor_avg_json[i] = avg_sensor
+            thirty_days_sensor_max_json[i] = max_sensor
+            thirty_days_airkorea_avg_json[i] = avg_airkorea
+            thirty_days_airkorea_max_json[i] = avg_airkorea
+            
+        m.seven_days_set.create(thirty_days_sensor_avg=thirty_days_sensor_avg_json,thirty_days_sensor_max=thirty_days_sensor_max_json,thirty_days_airkorea_avg=thirty_days_airkorea_avg_json,thirty_days_airkorea_max=thirty_days_airkorea_max_json,pub_date=sensors.first().pub_date)
+        
         m.save()
         print(f"thirty_days_cron : {i} week, data stored successfully on {now}\n") 
 
