@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import JSONField
 from django.utils.timezone import now
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.conf import settings
