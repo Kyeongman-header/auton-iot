@@ -53,30 +53,30 @@ class MyUser(AbstractBaseUser):
 
 class Sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
-    sensor=models.FloatField()
+    sensor=models.JSONField()
     pub_date=models.DateTimeField('sensor date published',default=now)
     def __str__(self):
         return str(self.sensor)
 
 class AirKorea(models.Model):
     machine=models.ForeignKey(Machine, on_delete=models.CASCADE)
-    airkorea=models.FloatField(max_length=100)
+    airkorea=models.JSONField()
     pub_date=models.DateTimeField('airkor date published',default=now)
     def __str__(self):
         return str(self.airkorea)
 
 class Seven_Days(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
-    seven_days_sensor_avg=models.FloatField(blank=True,null=True)
-    seven_days_sensor_max=models.FloatField(blank=True,null=True)
-    seven_days_airkorea_avg=models.FloatField(blank=True,null=True)
-    seven_days_airkorea_max=models.FloatField(blank=True,null=True)
+    seven_days_sensor_avg=models.JSONField(blank=True,null=True)
+    seven_days_sensor_max=models.JSONField(blank=True,null=True)
+    seven_days_airkorea_avg=models.JSONField(blank=True,null=True)
+    seven_days_airkorea_max=models.JSONField(blank=True,null=True)
     pub_date=models.DateTimeField('Seven days data published',default=now)
 
 class Thirty_Days(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
-    thirty_days_sensor_avg=models.FloatField(blank=True,null=True)
-    thirty_days_sensor_max=models.FloatField(blank=True,null=True)
-    thirty_days_airkorea_avg=models.FloatField(blank=True,null=True)
-    thirty_days_airkorea_max=models.FloatField(blank=True,null=True)
+    thirty_days_sensor_avg=models.JSONField(blank=True,null=True)
+    thirty_days_sensor_max=models.JSONField(blank=True,null=True)
+    thirty_days_airkorea_avg=models.JSONField(blank=True,null=True)
+    thirty_days_airkorea_max=models.JSONField(blank=True,null=True)
     pub_date=models.DateTimeField('Thirty days data published',default=now)
