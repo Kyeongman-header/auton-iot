@@ -1,8 +1,16 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.utils.timezone import now
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.conf import settings
+
+
+content_type = ContentType.objects.get_for_model()
+permission = Permission.objects.create(
+    codename='can_publish',
+    name='Can Publish Posts',
+    content_type=content_type,
+)
 
 class Machine(models.Model):
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_DEFAULT,blank=True,null=True,default=None)
@@ -14,29 +22,29 @@ class Machine(models.Model):
 
 
 class UserManager(BaseUserManager):
-    def create_user(self,username,password=None):
+    def create_user(self,username,password=None,**extra_fields):
         user=self.model(
-                username=username
+                username=username,
+                **extra_fields
                 )
-        if username=='AirKorea_API' or username=='QR_API' :
-            if password == 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self,username,password):
-        user=self.create_user(username,password=password)
+    def create_superuser(self,username,password,**extra_fields):
+        user=self.create_user(username,password=password,**extra_fields)
         user.is_admin=True
         user.save(using=self._db)
         return user
 
-class MyUser(AbstractBaseUser):
+class MyUser(AbstractBaseUser, PermissionsMixin):
     #machine=models.CharField(max_length=20,unique=True)
     #machine=models.ForeignKey(Machine,on_delete=models.CASCADE,blank=True,null=True)
     username=models.CharField(max_length=20,unique=True)
     
     is_active=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=False)
+    user_permissions=
 
     objects=UserManager()
     USERNAME_FIELD='username'
