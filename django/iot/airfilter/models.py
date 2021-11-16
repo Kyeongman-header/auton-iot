@@ -44,8 +44,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     
     is_active=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=False)
-    user_permissions=
-
     objects=UserManager()
     USERNAME_FIELD='username'
     REQUIRED_FIELDS=['password']
