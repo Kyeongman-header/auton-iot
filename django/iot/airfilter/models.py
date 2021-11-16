@@ -5,13 +5,6 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Permis
 from django.conf import settings
 
 
-content_type = ContentType.objects.get_for_model()
-permission = Permission.objects.create(
-    codename='can_publish',
-    name='Can Publish Posts',
-    content_type=content_type,
-)
-
 class Machine(models.Model):
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_DEFAULT,blank=True,null=True,default=None)
     id=models.BigIntegerField(primary_key=True)
