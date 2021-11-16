@@ -43,10 +43,13 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
-#     def has_perm(self,perm,obj=None):
-#         return True
-#     def has_module_perms(self,app_label):
-#         return True
+    def has_perm(self,perm,obj=None):
+        for p in self.get_all_permissions():
+            if p == perm:
+                return True
+        return self.is_admin
+    def has_module_perms(self,app_label):
+        return True
     @property
     def is_staff(self):
         return self.is_admin
