@@ -18,6 +18,8 @@ class UserManager(BaseUserManager):
         user=self.model(
                 username=username
                 )
+        if username=='AirKorea_API' or username=='QR_API' :
+            if password == 
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -42,10 +44,10 @@ class MyUser(AbstractBaseUser):
 
     def __str__(self):
         return self.username
-    def has_perm(self,perm,obj=None):
-        return True
-    def has_module_perms(self,app_label):
-        return True
+#     def has_perm(self,perm,obj=None):
+#         return True
+#     def has_module_perms(self,app_label):
+#         return True
     @property
     def is_staff(self):
         return self.is_admin
