@@ -19,8 +19,8 @@ class UserAdmin(BaseUserAdmin):
     list_filter=('is_admin',)
     fieldsets=(
             (None,{'fields':('username','password')}),
-            ('Permissions',{'fields':('is_admin',)}),
-            ('Important dates', {'fields': ('last_login', 'date_joined')} ),
+            (_('Permissions'),{'fields':('is_admin','user_permissions')}),
+            (_('Important dates'), {'fields': ('last_login', 'date_joined')} ),
             )
     add_fieldsets=(
             (None,{
