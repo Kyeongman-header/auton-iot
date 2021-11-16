@@ -25,7 +25,7 @@ def postgres_machine_add(host,user,password,db,car_number,machine_id):
         conn=pg2.connect(host=host,dbname=db,user=user,password=password)
     except Exception as e:
         with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
-            log.write("-----------------\n postgre sql connection error :( \n ---------------------")
+            log.write("-----------------\n postgre sql connection error :( \n ---------------------\n")
             log.write(e)
         return
     cur=conn.cursor()
@@ -35,13 +35,13 @@ def postgres_machine_add(host,user,password,db,car_number,machine_id):
         conn.commit()
     except pg2.DatabaseError as dberror:
         with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
-            log.write("-----------------------\n insert query to machine table error :(\n ----------------------")
+            log.write("-----------------------\n insert query to machine table error :(\n ----------------------\n")
             log.write(dberror)
             conn.rollback()
     else :
         with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
-            log.write("insert success \n")
-            log.write(query)
+            log.write("insert success : \n")
+            log.write(query + '\n')
             
     conn.close()
 
@@ -51,7 +51,7 @@ def postgres_sensor_insert(host,user,password,db,sensor,machine_id):
     except Exception as e:
         with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
             with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
-                log.write("-----------------\n postgre sql connection error :(\n--------------------")
+                log.write("-----------------\n postgre sql connection error :(\n--------------------\n")
                 log.write(e)
         return
 
@@ -70,7 +70,7 @@ def postgres_sensor_insert(host,user,password,db,sensor,machine_id):
     else :
         with open("/home/ubuntu/mqtt_postgres.log",'a') as log :
             log.write("insert success : \n")
-            log.write(query)
+            log.write(query + '\n')
 
     conn.close()
 
@@ -90,7 +90,7 @@ def on_connect(client,userdata,flags,rc):
             #    log.write(res.text + '\n')
 
         else:
-            log.write("Broker connection failure : " + str(rc))
+            log.write("Broker connection failure : " + str(rc) + '\n')
         log.write(str(datetime.datetime.now()) + '\n')
     
 
