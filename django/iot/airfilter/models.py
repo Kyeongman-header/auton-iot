@@ -1,23 +1,31 @@
-from django.db import models
+from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 from django.contrib.postgres.fields import JSONField
-from django.utils.timezone import now
+from django.utils import timezone
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.conf import settings
 
 
 class Machine(models.Model):
+    now=timezone.now()
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_DEFAULT,blank=True,null=True,default=None)
     id=models.BigIntegerField(primary_key=True)
     car_number=models.CharField(max_length=20)
-    pub_date=models.DateTimeField(default=now) 
+    pub_date=models.DateTimeField(default=now)
+    
+    gps=models.PointField()
+
     def __str__(self):
         return str(self.id)
 
 
 class UserManager(BaseUserManager):
     def create_user(self,username,password=None,**extra_fields):
+        now=timezone.now()
         user=self.model(
                 username=username,
+                last_login=now,
+                date_joined=now,
                 **extra_fields
                 )
         user.set_password(password)
@@ -37,6 +45,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     
     is_active=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=False)
+    date_joined=models.DateTimeField()
     objects=UserManager()
     USERNAME_FIELD='username'
     REQUIRED_FIELDS=['password']
@@ -56,6 +65,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Sensor(models.Model):
+    now=timezone.now()
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     sensor=models.JSONField()
     pub_date=models.DateTimeField('sensor date published',default=now)
@@ -63,6 +73,7 @@ class Sensor(models.Model):
         return str(self.sensor)
 
 class AirKorea(models.Model):
+    now=timezone.now()
     machine=models.ForeignKey(Machine, on_delete=models.CASCADE)
     airkorea=models.JSONField()
     pub_date=models.DateTimeField('airkor date published',default=now)
@@ -70,6 +81,7 @@ class AirKorea(models.Model):
         return str(self.airkorea)
 
 class Seven_Days(models.Model):
+    now=timezone.now()
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     seven_days_sensor_avg=models.JSONField(blank=True,null=True)
     seven_days_sensor_max=models.JSONField(blank=True,null=True)
@@ -78,6 +90,7 @@ class Seven_Days(models.Model):
     pub_date=models.DateTimeField('Seven days data published',default=now)
 
 class Thirty_Days(models.Model):
+    now=timezone.now()
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     thirty_days_sensor_avg=models.JSONField(blank=True,null=True)
     thirty_days_sensor_max=models.JSONField(blank=True,null=True)

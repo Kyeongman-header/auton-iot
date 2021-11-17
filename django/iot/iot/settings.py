@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'rest_framework',
     'django.contrib.sites',
     'allauth',
@@ -131,7 +132,7 @@ WSGI_APPLICATION = 'iot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'iot',
         'USER': 'auton',
         'PASSWORD' : 'mypassword',

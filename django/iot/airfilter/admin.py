@@ -1,3 +1,4 @@
+from django.contrib.gis.admin import OSMGeoAdmin
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -32,8 +33,8 @@ class UserAdmin(BaseUserAdmin):
     ordering=('username',)
     filter_horizontal=()
 
-class MachineAdmin(admin.ModelAdmin):
-    list_display=('id','car_number','pub_date')
+class MachineAdmin(OSMGeoAdmin):
+    list_display=('id','car_number','pub_date','gps')
     list_filter=['id','car_number','pub_date']
     search_fields=['id','car_number','pub_date']
     
