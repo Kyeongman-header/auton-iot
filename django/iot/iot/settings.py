@@ -40,7 +40,7 @@ ALLOWED_HOSTS.append(['10.0.15.%d' for x in range(256)])
 
 # Application definition
 CRONJOBS=[
-        ('* * * * *','airfilter.cron.seven_thirty_days','>> /tmp/cron.log'),
+        ('0 0 * * *','airfilter.cron.seven_thirty_days','>> /tmp/cron.log'),
  ]
 
 INSTALLED_APPS = [
