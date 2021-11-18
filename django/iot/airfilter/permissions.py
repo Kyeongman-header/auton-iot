@@ -23,9 +23,12 @@ class OnlyRightUserUpdateAvailable(permissions.BasePermission):
     def has_permission(self,request,view):
         if request.method == 'POST' :
             data = JSONParser().parse(request)
-            serializer = MachineSerializer(data=data)
+            serializer = view.serializer_class(data=data)
             
+            # 디버깅 용.
+            print(serializer)
             print(serializer.data['machine'])
+            # 디버깅 용.
             
             if request.user.machine_set.filter(id=serializer.data['machine']).exists() :
                 return True
