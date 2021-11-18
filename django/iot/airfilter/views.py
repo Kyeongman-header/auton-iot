@@ -40,7 +40,7 @@ class MachineViewset(ModelViewSet):
 class GPSViewset(ModelViewSet):
     queryset=GPS.objects.all()
     serializer_class=GPSSerializer
-    permission_classes=[IsAuthenticated,OnlyUpdateAvailable]
+    permission_classes=[IsAuthenticated,OnlyRightUserUpdateAvailable]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
