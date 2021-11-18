@@ -19,8 +19,15 @@ class AdminWriteOrUserReadOnly(permissions.BasePermission):
         return False
 
     # POST로 업데이트만이 가능하다.
-class OnlyUpdateAvailable(permissions.BasePermission):
+class OnlyRightUserUpdateAvailable(permissions.BasePermission):
     def has_permission(self,request,view):
         if request.method == 'POST' :
-            return True
+            data = JSONParser().parse(request)
+            serializer = MachineSerializer(data=data)
+            
+            print(serializer.data['machine'])
+            
+            if request.user.machine_set.filter(id=serializer.data['machine']).exists() :
+                return True
+        
         return False
