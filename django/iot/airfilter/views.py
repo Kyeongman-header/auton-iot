@@ -11,8 +11,10 @@ from rest_framework.parsers import JSONParser
 from django.contrib.auth import authenticate, login
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
+import requests
 import datetime
 
+Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 # Create your views here.
 
 class MyUserViewset(ModelViewSet):
@@ -26,17 +28,19 @@ class MachineViewset(ModelViewSet):
     queryset=Machine.objects.all()
     serializer_class=MachineSerializer
     permission_classes=[IsAdminUser,]
-    authentication_classes=[TokenAuthentication]
-    def update(self, request, *args, **kwargs):
-        
-        
-        kwargs['partial'] = True
-        return super().update(request, *args, **kwargs)
-    
+    authentication_classes=[SessionAuthentication,BasicAuthentication]
+
     def create(self, request):
         
         return super().create(request)
-        
+ 
+class QRViewset(ModelViewSet):
+    queryset=QR.objects.all()
+    serializer_class=QRSerializer
+    permission_classes=[IsAdminUser,]
+    authentication_classes=[SessionAuthentication,BasicAuthentication]
+    
+    
 class GPSViewset(ModelViewSet):
     queryset=GPS.objects.all()
     serializer_class=GPSSerializer
@@ -44,6 +48,19 @@ class GPSViewset(ModelViewSet):
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
+    def update(self, request, *args, **kwargs):
+        data = JSONParser().parse(request)
+        serializer = view.serializer_class(data=data)
+        d=serializer.data['gps']
+        
+        res=requests.post(Crawler_URL,data={'gps' : d})
+        # 여기서 DMZ의 AirKorea API Crawler에게 데이터를 요청하고 (request library), 돌려받은 데이터를 이용하여 AirKorea를 add 한다.
+        # Crawler_URL='http://crawler.auton-iot.com/api/gps/'
+        
+        m=Machine.objects.get(id=serializer.data['machine'])
+        m.airkorea_set.create(airkorea=res.json())
+        
+        return super().update(request, *args, **kwargs)
 
 class SensorViewset(ModelViewSet):
     queryset=Sensor.objects.all()
