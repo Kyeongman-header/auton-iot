@@ -6,6 +6,7 @@ from django.conf.urls import url,include
 router=DefaultRouter()
 router.register('user',views.MyUserViewset)
 router.register('machine',views.MachineViewset)
+router.register('gps',views.GPSViewset)
 router.register('sensor',views.SensorViewset)
 router.register('airkorea',views.AirKoreaViewset)
 router.register('seven_days',views.SevenDaysViewset)
