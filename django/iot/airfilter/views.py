@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 import requests
+import hashlib
 import datetime
 
 Crawler_URL='http://crawler.auton-iot.com/api/gps/'
@@ -23,6 +24,14 @@ class MyUserViewset(ModelViewSet):
     permission_classes=[IsAdminUser,]
     authentication_classes=[SessionAuthentication,BasicAuthentication]
 
+    
+def hash_machinid(raw_id):
+    data=b(str(id)).encode()
+    hash_object=hashlib.sha256()
+    hash_object.update(data)
+    hex_dig=hash_object.hexdigest()
+    return int(hex_dig,16)
+    
 
 class MachineViewset(ModelViewSet):
     queryset=Machine.objects.all()
@@ -31,14 +40,28 @@ class MachineViewset(ModelViewSet):
     authentication_classes=[SessionAuthentication,BasicAuthentication]
 
     def create(self, request):
+        super().create(request)
+        data = JSONParser().parse(request)
+        serializer = view.serializer_class(data=data)
+        id=serializer.data['id']
         
-        return super().create(request)
+        machine_id=hash_machineid(raw_id=id)
+        # raw id를 hash화 시킴.
+        
+        Machine.objects.get(id=id).update(id=machine_id)
+        # Machine의 id를 hash id로 업데이트.
+        
+        m=Machine.objects.get(id=machine_id)
+        # 해당 머신을 가지고...
+        # qr코드를 생성해냄.
+        return m.qr_set.create(qr='https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + str(machine_id))
  
-class QRViewset(ModelViewSet):
+class QRViewset(ReadOnlyModelViewSet):
     queryset=QR.objects.all()
     serializer_class=QRSerializer
     permission_classes=[IsAdminUser,]
     authentication_classes=[SessionAuthentication,BasicAuthentication]
+    
     
     
 class GPSViewset(ModelViewSet):
