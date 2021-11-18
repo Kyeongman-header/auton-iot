@@ -25,6 +25,14 @@ class GPS(models.Model):
     def __str__(self):
         return str(self.gps)
         
+class QR(models.Model):
+    now=timezone.now()
+    machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
+    qr=models.URLField()
+    pub_date=models.DateTimeField(default=now)
+    
+    def __str__(self):
+        return str(self.qr)
 
 class UserManager(BaseUserManager):
     def create_user(self,username,password=None,**extra_fields):
