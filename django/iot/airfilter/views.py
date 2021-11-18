@@ -25,7 +25,7 @@ class MyUserViewset(ModelViewSet):
 class MachineViewset(ModelViewSet):
     queryset=Machine.objects.all()
     serializer_class=MachineSerializer
-    permission_classes=[AdminWriteOrUserReadOnly,]
+    permission_classes=[IsAdminUser,]
     authentication_classes=[TokenAuthentication]
     def update(self, request, *args, **kwargs):
         
