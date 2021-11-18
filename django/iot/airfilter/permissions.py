@@ -28,6 +28,7 @@ class OnlyRightUserUpdateAvailable(permissions.BasePermission):
             # 디버깅 용.
             print(serializer)
             print(serializer.data['machine'])
+            print(request.user.machine_set.all())
             # 디버깅 용.
             
             if request.user.machine_set.filter(id=serializer.data['machine']).exists() :
