@@ -6,7 +6,10 @@ class GPSSerializer(serializers.ModelSerializer):
     class Meta:
         model=GPS
         fields=['machine','gps','pub_date']
-        
+ class QRSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=GPS
+        fields=['machine','qr','pub_date']       
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
