@@ -10,14 +10,21 @@ class Machine(models.Model):
     now=timezone.now()
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_DEFAULT,blank=True,null=True,default=None)
     id=models.BigIntegerField(primary_key=True)
-    car_number=models.CharField(max_length=20)
+    car_number=models.CharField(max_length=20,blank=True)
     pub_date=models.DateTimeField(default=now)
-    
-    gps=models.PointField()
 
     def __str__(self):
         return str(self.id)
-
+    
+class GPS(models.Model):
+    now=timezone.now()
+    machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
+    gps=models.PointField()
+    pub_date=models.DateTimeField(default=now)
+    
+    def __str__(self):
+        return str(self.gps)
+        
 
 class UserManager(BaseUserManager):
     def create_user(self,username,password=None,**extra_fields):
