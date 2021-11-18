@@ -27,7 +27,23 @@ class MachineViewset(ModelViewSet):
     serializer_class=MachineSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
-
+    def update(self, request, *args, **kwargs):
+        
+        
+        kwargs['partial'] = True
+        return super().update(request, *args, **kwargs)
+    
+    def create(self, request):
+        
+        return super().create(request)
+        
+class GPSViewset(ModelViewSet):
+    queryset=GPS.objects.all()
+    serializer_class=GPSSerializer
+    permission_classes=[IsAuthenticated,OnlyUpdateAvailable]
+    authentication_classes=[TokenAuthentication]
+    filter_backends=(DjangoFilterBackend,)
+    filter_fields={'machine'}
 
 class SensorViewset(ModelViewSet):
     queryset=Sensor.objects.all()
