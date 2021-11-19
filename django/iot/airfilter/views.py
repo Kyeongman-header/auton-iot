@@ -88,8 +88,8 @@ class GPSViewset(ModelViewSet):
             res=requests.post(Crawler_URL,data={'gps' : d})
         # 여기서 DMZ의 AirKorea API Crawler에게 데이터를 요청하고 (request library), 돌려받은 데이터를 이용하여 AirKorea를 add 한다.
         # Crawler_URL='http://crawler.auton-iot.com/api/gps/'
-            if res.status_code !=200 :
-                return HttpResponse(status_code = res.status_code)
+            if res.status_code !=201 :
+                return HttpResponse(status = res.status_code)
             
             m=Machine.objects.get(id=serializer.data['machine'])
             m.airkorea_set.create(airkorea=res.json())
