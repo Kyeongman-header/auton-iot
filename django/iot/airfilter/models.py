@@ -20,7 +20,7 @@ class GPS(models.Model):
     now=timezone.now()
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     gps=models.PointField()
-    pub_date=models.DateTimeField(default=now)
+    pub_date=models.DateTimeField(default=now,null=True)
     
     def __str__(self):
         return str(self.gps)
