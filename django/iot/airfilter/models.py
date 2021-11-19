@@ -54,7 +54,7 @@ class UserManager(BaseUserManager):
         return user
 
 class MyUser(AbstractBaseUser, PermissionsMixin):
-    now=timezoen.now()
+    now=timezone.now()
     #machine=models.CharField(max_length=20,unique=True)
     #machine=models.ForeignKey(Machine,on_delete=models.CASCADE,blank=True,null=True)
     username=models.CharField(max_length=20,unique=True)

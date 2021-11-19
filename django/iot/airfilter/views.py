@@ -4,6 +4,8 @@ from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import action
+
 from .models import *
 from .serializers import *
 from .permissions import *
@@ -38,24 +40,28 @@ class MachineViewset(ModelViewSet):
     serializer_class=MachineSerializer
     permission_classes=[IsAdminUser,]
     authentication_classes=[SessionAuthentication,BasicAuthentication]
-
-    def create(self, request):
-        super().create(request)
+    @action(detail=False,methods=['post'])
+    def qr_create(self, request):
         data = JSONParser().parse(request)
         serializer = view.serializer_class(data=data)
-        id=serializer.data['id']
+        if serializer.is_valid():
+            serializer.save()
+            id=serializer.data['id']
         
-        machine_id=hash_machineid(raw_id=id)
+            machine_id=hash_machineid(raw_id=id)
         # raw id를 hash화 시킴.
         
-        Machine.objects.get(id=id).update(id=machine_id)
+            Machine.objects.get(id=id).update(id=machine_id)
         # Machine의 id를 hash id로 업데이트.
         
-        m=Machine.objects.get(id=machine_id)
+            m=Machine.objects.get(id=machine_id)
         # 해당 머신을 가지고...
         # qr코드를 생성해냄.
-        return m.qr_set.create(qr='https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + str(machine_id))
- 
+        # 근데 얘가 response가 될 수는 없겠지.
+            m.qr_set.create(qr='https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + str(machine_id))
+            return JsonResponse(serializer.data,status-201)
+        return HttpResponse(status=500)
+    
 class QRViewset(ReadOnlyModelViewSet):
     queryset=QR.objects.all()
     serializer_class=QRSerializer
@@ -67,23 +73,28 @@ class QRViewset(ReadOnlyModelViewSet):
 class GPSViewset(ModelViewSet):
     queryset=GPS.objects.all()
     serializer_class=GPSSerializer
-    permission_classes=[IsAuthenticated,OnlyRightUserUpdateAvailable]
+    permission_classes=[IsAuthenticated,]#OnlyRightUserUpdateAvailable]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
-    def update(self, request, *args, **kwargs):
+    @action(detail=False,methods=['post'])
+    def find_airkorea(self, request):
         data = JSONParser().parse(request)
-        serializer = view.serializer_class(data=data)
-        d=serializer.data['gps']
+        serializer = GPSSerializer(data=data)
         
-        res=requests.post(Crawler_URL,data={'gps' : d})
+        if serializer.is_valid():
+            serializer.save()
+            d=serializer.data['gps']
+            res=requests.post(Crawler_URL,data={'gps' : d})
         # 여기서 DMZ의 AirKorea API Crawler에게 데이터를 요청하고 (request library), 돌려받은 데이터를 이용하여 AirKorea를 add 한다.
         # Crawler_URL='http://crawler.auton-iot.com/api/gps/'
+            if res.status_code !=200 :
+                return HttpResponse(status_code = res.status_code)
+            
+            m=Machine.objects.get(id=serializer.data['machine'])
+            m.airkorea_set.create(airkorea=res.json())
         
-        m=Machine.objects.get(id=serializer.data['machine'])
-        m.airkorea_set.create(airkorea=res.json())
-        
-        return super().update(request, *args, **kwargs)
+        return JsonResponse(serializer.data,status=201)
 
 class SensorViewset(ModelViewSet):
     queryset=Sensor.objects.all()

@@ -1,4 +1,6 @@
 from rest_framework import permissions
+from rest_framework.parsers import JSONParser
+from .serializers import *
 
 class AdminWriteOrUserReadOnly(permissions.BasePermission):
     def has_permission(self,request,view):
@@ -23,15 +25,15 @@ class OnlyRightUserUpdateAvailable(permissions.BasePermission):
     def has_permission(self,request,view):
         if request.method == 'POST' :
             data = JSONParser().parse(request)
-            serializer = view.serializer_class(data=data)
-            
+            serializer = GPSSerializer(data=data)
+            if serializer.is_valid(): 
             # 디버깅 용.
-            print(serializer)
-            print(serializer.data['machine'])
-            print(request.user.machine_set.all())
+                #print(serializer)
+                #print(serializer.data['machine'])
+                #print(request.user.machine_set.all())
             # 디버깅 용.
             
-            if request.user.machine_set.filter(id=serializer.data['machine']).exists() :
-                return True
+                if request.user.machine_set.filter(id=serializer.data['machine']).exists() :
+                    return True
         
         return False
