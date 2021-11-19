@@ -54,13 +54,14 @@ class UserManager(BaseUserManager):
         return user
 
 class MyUser(AbstractBaseUser, PermissionsMixin):
+    now=timezoen.now()
     #machine=models.CharField(max_length=20,unique=True)
     #machine=models.ForeignKey(Machine,on_delete=models.CASCADE,blank=True,null=True)
     username=models.CharField(max_length=20,unique=True)
     
     is_active=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=False)
-    date_joined=models.DateTimeField()
+    date_joined=models.DateTimeField(default=now)
     objects=UserManager()
     USERNAME_FIELD='username'
     REQUIRED_FIELDS=['password']
