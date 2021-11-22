@@ -25,7 +25,7 @@ class MyUserViewset(ModelViewSet):
     queryset=MyUser.objects.all()
     serializer_class=MyUserSerializer
     permission_classes=[IsAdminUser,]
-    authentication_classes=[SessionAuthentication,BasicAuthentication]
+    #authentication_classes=[SessionAuthentication,BasicAuthentication]
 
     
 def hash_machinid(raw_id):
@@ -40,7 +40,7 @@ class MachineViewset(ModelViewSet):
     queryset=Machine.objects.all()
     serializer_class=MachineSerializer
     permission_classes=[IsAdminUser,]
-    authentication_classes=[SessionAuthentication,BasicAuthentication]
+    #authentication_classes=[SessionAuthentication,BasicAuthentication]
     @action(detail=False,methods=['post'])
     def qr_create(self, request):
         data = JSONParser().parse(request)
@@ -67,7 +67,7 @@ class QRViewset(ReadOnlyModelViewSet):
     queryset=QR.objects.all()
     serializer_class=QRSerializer
     permission_classes=[IsAdminUser,]
-    authentication_classes=[SessionAuthentication,BasicAuthentication]
+    #authentication_classes=[SessionAuthentication,BasicAuthentication]
     
     
 def find_point(gps_string):
