@@ -10,7 +10,7 @@ class Machine(models.Model):
     now=timezone.now()
     user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_DEFAULT,blank=True,null=True,default=None)
     id=models.BigIntegerField(primary_key=True)
-    car_number=models.CharField(max_length=20,blank=True)
+    car_number=models.CharField(max_length=20,blank=True,null=True)
     pub_date=models.DateTimeField(default=timezone.now)
 
     def __str__(self):
