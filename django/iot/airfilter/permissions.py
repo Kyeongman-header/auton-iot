@@ -5,7 +5,7 @@ from .serializers import *
 class AdminWriteOrUserReadOnly(permissions.BasePermission):
     def has_permission(self,request,view):
         if request.user.is_authenticated:
-            if request.user.is_staff() :
+            if request.user.is_staff :
                 return True
             elif request.user.has_perm('airfilter.add_airkorea'):
                 return True
