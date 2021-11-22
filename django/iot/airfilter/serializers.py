@@ -8,7 +8,7 @@ class GPSSerializer(serializers.ModelSerializer):
         fields=['machine','gps','pub_date']
 class QRSerializer(serializers.ModelSerializer):
     class Meta:
-        model=GPS
+        model=QR
         fields=['machine','qr','pub_date']       
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
