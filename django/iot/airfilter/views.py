@@ -24,8 +24,8 @@ Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 class MyUserViewset(ModelViewSet):
     queryset=MyUser.objects.all()
     serializer_class=MyUserSerializer
-    permission_classes=[IsAdminUser,]
-    #authentication_classes=[SessionAuthentication,BasicAuthentication]
+    permission_classes=[IsAuthenticated,]
+    authentication_classes=[TokenAuthentication]
 
     
 def hash_machinid(raw_id):
@@ -36,11 +36,12 @@ def hash_machinid(raw_id):
     return int(hex_dig,16)
     
 
+    
 class MachineViewset(ModelViewSet):
     queryset=Machine.objects.all()
     serializer_class=MachineSerializer
     permission_classes=[IsAdminUser,]
-    #authentication_classes=[SessionAuthentication,BasicAuthentication]
+    authentication_classes=[TokenAuthentication]
     @action(detail=False,methods=['post'])
     def qr_create(self, request):
         data = JSONParser().parse(request)
