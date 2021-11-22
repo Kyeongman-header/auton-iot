@@ -53,7 +53,7 @@ class MachineViewset(ModelViewSet):
             machine_id=hash_machineid(raw_id=id)
         # raw id를 hash화 시킴.
             
-            m=Machine.objects.get(id=id).
+            m=Machine.objects.get(id=id)
             m.id=machine_id
         # Machine의 id를 hash id로 업데이트.
         # 해당 머신을 가지고...
