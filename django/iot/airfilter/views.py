@@ -69,6 +69,7 @@ class QRViewset(ReadOnlyModelViewSet):
     queryset=QR.objects.all()
     serializer_class=QRSerializer
     permission_classes=[IsAdminUser,]
+    authentication_classes=[TokenAuthentication]
     #authentication_classes=[SessionAuthentication,BasicAuthentication]
     
     
