@@ -61,7 +61,7 @@ class MachineViewset(ModelViewSet):
         # qr코드를 생성해냄.
         # 근데 얘가 response가 될 수는 없겠지.
             m.qr_set.create(qr='https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + (machine_id))
-            
+            serializer=MachineSerializer(obj=m)
             return JsonResponse(serializer.data,status=201)
         return HttpResponse(status=500)
     
