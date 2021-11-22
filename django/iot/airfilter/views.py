@@ -26,11 +26,15 @@ class MyUserViewset(ModelViewSet):
     serializer_class=MyUserSerializer
     permission_classes=[IsAuthenticated,]
     authentication_classes=[TokenAuthentication]
+    filter_backends=(DjangoFilterBackend,)
+    filter_fields={'username'}
+    
     def list(self, request):
         if request.user.is_staff :
             return super().list(request)
         else :
             return HttpResponse(status=405)
+
     
 def hash_machineid(raw_id):
     data=(raw_id).encode()
@@ -64,7 +68,7 @@ class MachineViewset(ModelViewSet):
         # 해당 머신을 가지고...
         # qr코드를 생성해냄.
         # 근데 얘가 response가 될 수는 없겠지.
-            m.qr_set.create(qr='https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + (machine_id))
+            m.qr_set.create(qr='https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + (machine_id), raw_id=id)
             return JsonResponse({ 'id' : m.id},status=201)
         return HttpResponse(status=500)
     
@@ -73,6 +77,8 @@ class QRViewset(ReadOnlyModelViewSet):
     serializer_class=QRSerializer
     permission_classes=[IsAdminUser,]
     authentication_classes=[TokenAuthentication]
+    filter_backends=(DjangoFilterBackend,)
+    filter_fields={'machine'}
     #authentication_classes=[SessionAuthentication,BasicAuthentication]
     
     
@@ -125,6 +131,7 @@ class GPSViewset(ModelViewSet):
             return super().list(request)
         else :
             return HttpResponse(status=405)
+
 
 class SensorViewset(ModelViewSet):
     queryset=Sensor.objects.all()
