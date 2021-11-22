@@ -52,7 +52,10 @@ class MachineViewset(ModelViewSet):
             
             machine_id=hash_machineid(raw_id=id)
         # raw id를 hash화 시킴.
-            m=Machine.objects.create(id=machine_id)
+            try :
+                m=Machine.objects.create(id=machine_id)
+            except e :
+                return HttpResponse('Maybe there is already same machine, or other error occurs.')
         # Machine의 id를 hash id로 업데이트.
         # 해당 머신을 가지고...
         # qr코드를 생성해냄.
