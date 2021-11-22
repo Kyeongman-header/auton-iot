@@ -42,9 +42,9 @@ class GPSAdmin(OSMGeoAdmin):
     list_filter=('machine','pub_date')
     search_fields=['machine','pub_date','gps']
 class QRAdmin(admin.ModelAdmin):
-    list_display=('pub_date','qr','machine')
-    list_filter=('machine','pub_date')
-    search_fields=['machine','pub_date','qr']
+    list_display=('pub_date','qr','machine','raw_id')
+    list_filter=('machine','pub_date','raw_id')
+    search_fields=['machine','pub_date','qr','raw_id']
 class SensorAdmin(admin.ModelAdmin):
     list_display=('pub_date','sensor','machine')
     list_filter=('machine','pub_date')
