@@ -61,7 +61,7 @@ class MachineViewset(ModelViewSet):
         # qr코드를 생성해냄.
         # 근데 얘가 response가 될 수는 없겠지.
             m.qr_set.create(qr='https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + (machine_id))
-            return JsonResponse({id : m.id},status=201)
+            return JsonResponse({ 'id' : m.id},status=201)
         return HttpResponse(status=500)
     
 class QRViewset(ReadOnlyModelViewSet):
