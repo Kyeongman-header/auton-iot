@@ -28,7 +28,7 @@ class MyUserViewset(ModelViewSet):
     authentication_classes=[TokenAuthentication]
     def list(self, request):
         if request.user.is_staff :
-            return super().list
+            return super().list(request)
         else :
             return HttpResponse(status=405)
     
