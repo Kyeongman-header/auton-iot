@@ -29,7 +29,7 @@ class MyUserViewset(ModelViewSet):
 
     
 def hash_machineid(raw_id):
-    data=(str(id)).encode()
+    data=(id).encode()
     hash_object=hashlib.sha256()
     hash_object.update(data)
     hex_dig=hash_object.hexdigest()
@@ -59,7 +59,7 @@ class MachineViewset(ModelViewSet):
         # 해당 머신을 가지고...
         # qr코드를 생성해냄.
         # 근데 얘가 response가 될 수는 없겠지.
-            m.qr_set.create(qr='https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + str(machine_id))
+            m.qr_set.create(qr='https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + (machine_id))
             return JsonResponse(serializer.data,status=201)
         return HttpResponse(status=500)
     
