@@ -50,12 +50,12 @@ class MachineViewset(ModelViewSet):
             serializer.save()
             id=serializer.data['id']
             
-            machine_id=hash_machineid(raw_id=id)
+            #machine_id=hash_machineid(raw_id=id)
         # raw id를 hash화 시킴.
         
             #Machine.objects.get(id=id).update(id=machine_id)
         # Machine의 id를 hash id로 업데이트.
-        
+            machine_id=54
             m=Machine.objects.get(id=machine_id)
         # 해당 머신을 가지고...
         # qr코드를 생성해냄.
