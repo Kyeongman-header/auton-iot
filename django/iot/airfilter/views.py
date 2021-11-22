@@ -30,7 +30,7 @@ class MyUserViewset(ModelViewSet):
         if request.user.is_staff :
             return super().list
         else :
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return HttpResponse(status=405)
     
 def hash_machineid(raw_id):
     data=(raw_id).encode()
