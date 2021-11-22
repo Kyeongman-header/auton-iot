@@ -5,7 +5,8 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import action
-
+import os
+import json
 from .models import *
 from .serializers import *
 from .permissions import *
@@ -47,7 +48,7 @@ class MachineViewset(ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             id=serializer.data['id']
-        
+            
             machine_id=hash_machineid(raw_id=id)
         # raw id를 hash화 시킴.
         
@@ -69,7 +70,16 @@ class QRViewset(ReadOnlyModelViewSet):
     authentication_classes=[SessionAuthentication,BasicAuthentication]
     
     
-    
+def find_point(gps_string):
+
+    point=[]
+    gps_string=gps_string.split(';')[1]
+    gps_string=gps_string.replace('(',"")
+    gps_string=gps_string.replace(')',"")
+    point.append(gps_string.split(' ')[1])
+    point.append(gps_string.split(' ')[2])
+    return point
+
 class GPSViewset(ModelViewSet):
     queryset=GPS.objects.all()
     serializer_class=GPSSerializer
@@ -85,14 +95,19 @@ class GPSViewset(ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             d=serializer.data['gps']
-            res=requests.post(Crawler_URL,data={'gps' : d})
-        # 여기서 DMZ의 AirKorea API Crawler에게 데이터를 요청하고 (request library), 돌려받은 데이터를 이용하여 AirKorea를 add 한다.
-        # Crawler_URL='http://crawler.auton-iot.com/api/gps/'
-            if res.status_code !=201 :
-                return HttpResponse(status = res.status_code)
             
+            point=find_point(d)
+            shell='curl "http://crawler.auton-iot.com/api/gps/?X='+point[0]+'&Y='+point[1]+'"'
+            stream=os.popen(shell)
+            #res=requests.post(Crawler_URL,data={'gps' : d},timeout=timeout)
+        # 여기서 DMZ의 AirKorea API Crawler에게 데이터를 요청하고 (request library), 돌려받은 데이터를 이용하여 AirKorea를 add 한다.
+
+            #if res.status_code !=201 :
+            #    return HttpResponse(status = res.status_code)
+            output=stream.read()
+            ar=json.loads(output)
             m=Machine.objects.get(id=serializer.data['machine'])
-            m.airkorea_set.create(airkorea=res.json())
+            m.airkorea_set.create(airkorea=ar["airkorea"])
         
         return JsonResponse(serializer.data,status=201)
 
