@@ -28,7 +28,9 @@ class GPS(models.Model):
 class QR(models.Model):
     now=timezone.now()
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
+    raw_id=models.CharField(max_length=200)
     qr=models.URLField()
+    
     pub_date=models.DateTimeField(default=timezone.now)
     
     def __str__(self):
