@@ -45,7 +45,7 @@ class MachineViewset(ModelViewSet):
     @action(detail=False,methods=['post'])
     def qr_create(self, request):
         data = JSONParser().parse(request)
-        serializer = view.serializer_class(data=data)
+        serializer = MachineSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             id=serializer.data['id']
@@ -91,6 +91,7 @@ class GPSViewset(ModelViewSet):
     @action(detail=False,methods=['post'])
     def find_airkorea(self, request):
         data = JSONParser().parse(request)
+            
         serializer = GPSSerializer(data=data)
         
         if serializer.is_valid():
