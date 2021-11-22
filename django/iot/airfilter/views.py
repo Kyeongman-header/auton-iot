@@ -50,8 +50,7 @@ class MachineViewset(ModelViewSet):
     serializer_class=MachineSerializer
     permission_classes=[IsAdminUser,]
     authentication_classes=[TokenAuthentication]
-    @action(detail=False,methods=['post'])
-    def qr_create(self, request):
+    def create(self, request):
         data = JSONParser().parse(request)
         serializer = MachineSerializer(data=data)
         if serializer.is_valid():
@@ -102,7 +101,7 @@ class GPSViewset(ModelViewSet):
     
 
     @action(detail=False,methods=['post'])
-    def find_airkorea(self, request):
+    def update_airkorea(self, request):
         data = JSONParser().parse(request)
             
         serializer = GPSSerializer(data=data)
