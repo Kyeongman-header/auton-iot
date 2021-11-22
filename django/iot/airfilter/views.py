@@ -52,15 +52,13 @@ class MachineViewset(ModelViewSet):
             
             machine_id=hash_machineid(raw_id=id)
         # raw id를 hash화 시킴.
-            
-            m=Machine.objects.get(id=id)
-            m.id=machine_id
+            m=Machine.objects.create(id=machine_id)
         # Machine의 id를 hash id로 업데이트.
         # 해당 머신을 가지고...
         # qr코드를 생성해냄.
         # 근데 얘가 response가 될 수는 없겠지.
             m.qr_set.create(qr='https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + (machine_id))
-            serializer.save()
+            
             return JsonResponse(serializer.data,status=201)
         return HttpResponse(status=500)
     
