@@ -54,7 +54,7 @@ class MachineViewset(ModelViewSet):
         # raw id를 hash화 시킴.
             try :
                 m=Machine.objects.create(id=machine_id)
-            except e :
+            except Error as e :
                 return HttpResponse('Maybe there is already same machine, or other error occurs.')
         # Machine의 id를 hash id로 업데이트.
         # 해당 머신을 가지고...
