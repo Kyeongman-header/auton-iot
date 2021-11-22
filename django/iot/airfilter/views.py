@@ -27,10 +27,10 @@ class MyUserViewset(ModelViewSet):
     permission_classes=[IsAuthenticated,]
     authentication_classes=[TokenAuthentication]
     def list(self, request):
-        if !request.user.is_staff:
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if request.user.is_staff :
+            return super().list
         else :
-            return super().list()
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
 def hash_machineid(raw_id):
     data=(raw_id).encode()
