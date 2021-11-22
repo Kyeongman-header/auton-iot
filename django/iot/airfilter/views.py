@@ -33,7 +33,7 @@ def hash_machineid(raw_id):
     hash_object=hashlib.sha256()
     hash_object.update(data)
     hex_dig=hash_object.hexdigest()
-    return int(hex_dig,16)
+    return (hex_dig)
     
 
     
