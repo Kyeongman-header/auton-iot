@@ -29,7 +29,7 @@ class MyUserViewset(ModelViewSet):
 
     
 def hash_machineid(raw_id):
-    data=(id).encode()
+    data=(raw_id).encode()
     hash_object=hashlib.sha256()
     hash_object.update(data)
     hex_dig=hash_object.hexdigest()
