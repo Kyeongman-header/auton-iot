@@ -93,6 +93,8 @@ class GPSViewset(ModelViewSet):
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
+    
+
     @action(detail=False,methods=['post'])
     def find_airkorea(self, request):
         data = JSONParser().parse(request)
@@ -117,6 +119,12 @@ class GPSViewset(ModelViewSet):
             m.airkorea_set.create(airkorea=ar["airkorea"])
         
         return JsonResponse(serializer.data,status=201)
+    
+    def list(self, request):
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            return HttpResponse(status=405)
 
 class SensorViewset(ModelViewSet):
     queryset=Sensor.objects.all()
@@ -125,6 +133,11 @@ class SensorViewset(ModelViewSet):
     authentication_classes=[TokenAuthentication] 
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
+    def list(self, request):
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            return HttpResponse(status=405)
 
 class AirKoreaViewset(ModelViewSet):
     queryset=AirKorea.objects.all()
@@ -133,6 +146,11 @@ class AirKoreaViewset(ModelViewSet):
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
+    def list(self, request):
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            return HttpResponse(status=405)
 
 class SevenDaysViewset(ReadOnlyModelViewSet):
     queryset=Seven_Days.objects.all()
@@ -141,6 +159,11 @@ class SevenDaysViewset(ReadOnlyModelViewSet):
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
+    def list(self, request):
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            return HttpResponse(status=405)
 
 class ThirtyDaysViewset(ReadOnlyModelViewSet):
     queryset=Thirty_Days.objects.all()
@@ -149,6 +172,11 @@ class ThirtyDaysViewset(ReadOnlyModelViewSet):
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
+    def list(self, request):
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            return HttpResponse(status=405)
 
 
 # @csrf_exempt
