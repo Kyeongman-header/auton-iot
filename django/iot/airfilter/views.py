@@ -1,5 +1,5 @@
 from rest_framework.authentication import TokenAuthentication,SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated,IsAdminUser
+from rest_framework.permissions import IsAuthenticated,IsAdminUser, AllowAny
 from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
