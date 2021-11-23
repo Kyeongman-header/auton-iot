@@ -135,15 +135,16 @@ class GPSViewset(ModelViewSet):
 class SensorViewset(ModelViewSet):
     queryset=Sensor.objects.all()
     serializer_class=SensorSerializer
-    permission_classes=[AdminWriteOrUserReadOnly,]
-    authentication_classes=[TokenAuthentication] 
+    permission_classes=[AllowAny] # for 통신 테스트 with 고등기술연구원.
+    #permission_classes=[AdminWriteOrUserReadOnly,]
+    #authentication_classes=[TokenAuthentication] 
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
-    def list(self, request):
-        if request.user.is_staff :
-            return super().list(request)
-        else :
-            return HttpResponse(status=405)
+#     def list(self, request):
+#         if request.user.is_staff :
+#             return super().list(request)
+#         else :
+#             return HttpResponse(status=405)
 
 class AirKoreaViewset(ModelViewSet):
     queryset=AirKorea.objects.all()
