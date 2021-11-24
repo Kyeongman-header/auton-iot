@@ -104,23 +104,7 @@ class QRViewset(ReadOnlyModelViewSet):
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
     #authentication_classes=[SessionAuthentication,BasicAuthentication]
-    def list(self, request):
-        if request.user.is_staff :
-            return super().list(request)
-        else :
-            try :
-                m=request.user.machine
-            except :
-                return HttpResponse("No machine registered in that user.", status=405)
-            qrs=m.qr_set.all()
-            qr_jsons=serializers.serialize('json',qrs)
-            return JsonResponse(qr_jsons,status=200)
-          
-    def retrieve(self, request,pk=None):
-        if request.user.is_staff :
-            return super().retrieve(request,pk)
-        else :
-            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)    
+
     
     
 def find_point(gps_string):
