@@ -235,7 +235,7 @@ class SevenDaysViewset(ReadOnlyModelViewSet):
                 return HttpResponse("No machine registered in that user.", status=405)
             sevendayss=m.sevendays_set.all()
             sevendays_jsons=SevenDaysSerializer(sevendayss,many=True).data
-            return JsonResponse(sevendays_jsons,status=200,safe=False,safe=False)
+            return JsonResponse(sevendays_jsons,status=200,safe=False)
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
             return super().retrieve(request,pk)
@@ -259,7 +259,7 @@ class ThirtyDaysViewset(ReadOnlyModelViewSet):
                 return HttpResponse("No machine registered in that user.", status=405)
             thirtydayss=m.thirtydays_set.all()
             thirtydays_jsons=ThirtyDaysSerializer(thirtydayss,many=True).data
-            return JsonResponse(thirtydays_jsons,status=200,safe=False,safe=False)
+            return JsonResponse(thirtydays_jsons,status=200,safe=False)
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
             return super().retrieve(request,pk)
