@@ -21,29 +21,29 @@ import datetime
 Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 # Create your views here.
 
-class MyUserViewset(ModelViewSet):
+class MyUserViewset(ReadOnlyModelViewSet):
     queryset=MyUser.objects.all()
     serializer_class=MyUserSerializer
-    permission_classes=[AllowAny,]
+    permission_classes=[IsAdmin,]
     #authentication_classes=[TokenAuthentication]
 #     filter_backends=(DjangoFilterBackend,)
 #     filter_fields={'username'}
-    def list(self, request):
-        if request.user.is_staff :
-            return super().list(request)
-        else :
-            return HttpResponse(status=405)
-    def destroy(self, request, pk=None):
-        if request.user.is_staff :
-            return super().destroy(request,pk)
-        else :
-            return HttpResponse(status=405)
+#     def list(self, request):
+#         if request.user.is_staff :
+#             return super().list(request)
+#         else :
+#             return HttpResponse(status=405)
+#     def destroy(self, request, pk=None):
+#         if request.user.is_staff :
+#             return super().destroy(request,pk)
+#         else :
+#             return HttpResponse(status=405)
         
-    def retrieve(self, request,pk=None):
-        if request.user.is_staff :
-            return super().retrieve(request,pk)
-        else :
-            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)    
+#     def retrieve(self, request,pk=None):
+#         if request.user.is_staff :
+#             return super().retrieve(request,pk)
+#         else :
+#             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)    
     
 def hash_machineid(raw_id):
     data=(raw_id).encode()
