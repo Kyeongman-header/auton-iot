@@ -14,6 +14,7 @@ from rest_framework.parsers import JSONParser
 from django.contrib.auth import authenticate, login
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
+from django.core import serializers
 import requests
 import hashlib
 import datetime
@@ -224,6 +225,7 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             airkoreas=m.airkorea_set.all()
+            
             airkorea_jsons=serializers.serialize('json',airkoreas)
             return JsonResponse(airkorea_jsons,status=200)
         
