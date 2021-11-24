@@ -14,8 +14,8 @@ fi
 
 if [ -e /usr/lib/systemd/system/nginx.service ] 
 then
-sudo /usr/bin/python3 /home/ubuntu/django/iot/manage.py collectstatic
 sudo service nginx restart
+sudo /usr/bin/python3 /home/ubuntu/django/iot/manage.py collectstatic
 fi
 
 if [ -e /etc/systemd/system/gunicorn.service ] 
