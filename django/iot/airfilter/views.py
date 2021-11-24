@@ -127,6 +127,12 @@ class GPSViewset(ModelViewSet):
     
     def create(self, request):
         data = JSONParser().parse(request)
+        try :
+            m=request.user.machine
+        except :
+            return HttpResponse("No machine registered in that user.", status=405)
+        
+        data['machine']=m.id
         serializer = GPSSerializer(data=data)
         
         if serializer.is_valid():
