@@ -147,7 +147,7 @@ class GPSViewset(ModelViewSet):
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             gpss=m.gps_set.all()
-            gps_jsons=GPSSerializers.serialize(gpss,many=True).data
+            gps_jsons=GPSSerializer.serialize(gpss,many=True).data
             return JsonResponse(gps_jsons,status=200,safe=False)
         
     def destroy(self, request, pk=None):
@@ -182,7 +182,7 @@ class SensorViewset(ReadOnlyModelViewSet):
 #                 return HttpResponse("No machine registered in that user.", status=405)
 #             sensors=m.sensor_set.all()
 #             sensor_jsons=SensorSerializer(sensors,many=True).data
-#             return JsonResponse(sensor_jsons,status=200,safe=False)
+#             return JsonResponse(sensor_jsons,status=200,safe=False,safe=False)
         
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
@@ -210,7 +210,7 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
             airkoreas=m.airkorea_set.all()
             
             airkorea_jsons=AirKoreaSerializer(airkoreas,many=True).data
-            return JsonResponse(airkorea_jsons,status=200)
+            return JsonResponse(airkorea_jsons,status=200,safe=False)
         
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
@@ -235,7 +235,7 @@ class SevenDaysViewset(ReadOnlyModelViewSet):
                 return HttpResponse("No machine registered in that user.", status=405)
             sevendayss=m.sevendays_set.all()
             sevendays_jsons=SevenDaysSerializer(sevendayss,many=True).data
-            return JsonResponse(sevendays_jsons,status=200,safe=False)
+            return JsonResponse(sevendays_jsons,status=200,safe=False,safe=False)
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
             return super().retrieve(request,pk)
@@ -259,7 +259,7 @@ class ThirtyDaysViewset(ReadOnlyModelViewSet):
                 return HttpResponse("No machine registered in that user.", status=405)
             thirtydayss=m.thirtydays_set.all()
             thirtydays_jsons=ThirtyDaysSerializer(thirtydayss,many=True).data
-            return JsonResponse(thirtydays_jsons,status=200,safe=False)
+            return JsonResponse(thirtydays_jsons,status=200,safe=False,safe=False)
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
             return super().retrieve(request,pk)
