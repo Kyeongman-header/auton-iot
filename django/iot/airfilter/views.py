@@ -24,7 +24,7 @@ Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 class MyUserViewset(ReadOnlyModelViewSet):
     queryset=MyUser.objects.all()
     serializer_class=MyUserSerializer
-    permission_classes=[IsAdmin,]
+    permission_classes=[IsAdminUser]
     #authentication_classes=[TokenAuthentication]
 #     filter_backends=(DjangoFilterBackend,)
 #     filter_fields={'username'}
