@@ -60,7 +60,7 @@ class MachineViewset(ModelViewSet):
     
     def create(self, request):
         # 생성 작업은 admin과 factory만 가능하다.
-        if ! request.user.is_staff :
+        if not request.user.is_staff :
             return HttpResponse(status=405) 
         data = JSONParser().parse(request)
         serializer = MachineSerializer(data=data)
