@@ -24,11 +24,10 @@ Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 class MyUserViewset(ModelViewSet):
     queryset=MyUser.objects.all()
     serializer_class=MyUserSerializer
-    permission_classes=[IsAuthenticated,]
-    authentication_classes=[TokenAuthentication]
-    filter_backends=(DjangoFilterBackend,)
-    filter_fields={'username'}
-    
+    permission_classes=[AllowAny,]
+    #authentication_classes=[TokenAuthentication]
+#     filter_backends=(DjangoFilterBackend,)
+#     filter_fields={'username'}
     def list(self, request):
         if request.user.is_staff :
             return super().list(request)
@@ -39,7 +38,12 @@ class MyUserViewset(ModelViewSet):
             return super().destroy(request,pk)
         else :
             return HttpResponse(status=405)
-
+        
+    def retrieve(self, request,pk=None):
+        if request.user.is_staff :
+            return super().retrieve(request,pk)
+        else :
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)    
     
 def hash_machineid(raw_id):
     data=(raw_id).encode()
@@ -55,6 +59,9 @@ class MachineViewset(ModelViewSet):
     authentication_classes=[TokenAuthentication]
     
     def create(self, request):
+        # 생성 작업은 admin과 factory만 가능하다.
+        if ! request.user.is_staff :
+            return HttpResponse(status=405) 
         data = JSONParser().parse(request)
         serializer = MachineSerializer(data=data)
         if serializer.is_valid():
@@ -102,7 +109,7 @@ class QRViewset(ReadOnlyModelViewSet):
             return super().list(request)
         else :
             try :
-                m=request.user.machine_set.get(user=request.user.username)
+                m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             qrs=m.qr_set.all()
@@ -162,7 +169,7 @@ class GPSViewset(ModelViewSet):
             return super().list(request)
         else :
             try :
-                m=request.user.machine_set.get(user=request.user.username)
+                m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             gpss=m.gps_set.all()
@@ -196,7 +203,7 @@ class SensorViewset(ReadOnlyModelViewSet):
 #             return super().list(request)
 #         else :
 #             try :
-#                 m=request.user.machine_set.get(user=request.user.username)
+#                 m=request.user.machine
 #             except :
 #                 return HttpResponse("No machine registered in that user.", status=405)
 #             sensors=m.sensor_set.all()
@@ -223,7 +230,7 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
             return super().list(request)
         else :
             try :
-                m=request.user.machine_set.get(user=request.user.username)
+                m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             airkoreas=m.airkorea_set.all()
@@ -248,7 +255,7 @@ class SevenDaysViewset(ReadOnlyModelViewSet):
             return super().list(request)
         else :
             try :
-                m=request.user.machine_set.get(user=request.user.username)
+                m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             sevendayss=m.sevendays_set.all()
@@ -272,7 +279,7 @@ class ThirtyDaysViewset(ReadOnlyModelViewSet):
             return super().list(request)
         else :
             try :
-                m=request.user.machine_set.get(user=request.user.username)
+                m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             thirtydayss=m.thirtydays_set.all()
