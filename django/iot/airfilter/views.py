@@ -147,7 +147,7 @@ class GPSViewset(ModelViewSet):
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             gpss=m.gps_set.all()
-            gps_jsons=GPSSerializer.serialize(gpss,many=True).data
+            gps_jsons=GPSSerializer(gpss,many=True).data
             return JsonResponse(gps_jsons,status=200,safe=False)
         
     def destroy(self, request, pk=None):
