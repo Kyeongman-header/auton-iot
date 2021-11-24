@@ -34,7 +34,11 @@ class MyUserViewset(ModelViewSet):
             return super().list(request)
         else :
             return HttpResponse(status=405)
-
+    def destroy(self, request, pk=None):
+        if request.user.is_staff :
+            return super().destroy(request,pk)
+        else :
+            return HttpResponse(status=405)
 
     
 def hash_machineid(raw_id):
@@ -44,13 +48,12 @@ def hash_machineid(raw_id):
     hex_dig=hash_object.hexdigest()
     return (hex_dig)
     
-
-    
 class MachineViewset(ModelViewSet):
     queryset=Machine.objects.all()
     serializer_class=MachineSerializer
     permission_classes=[IsAuthenticated,]
     authentication_classes=[TokenAuthentication]
+    
     def create(self, request):
         data = JSONParser().parse(request)
         serializer = MachineSerializer(data=data)
@@ -81,8 +84,8 @@ class MachineViewset(ModelViewSet):
         if request.user.is_staff :
             return super().destroy(request,pk)
         else :
-            return HttpResponse(status=405)         
-    
+            return HttpResponse(status=405)
+
     
     
     
@@ -98,12 +101,20 @@ class QRViewset(ReadOnlyModelViewSet):
         if request.user.is_staff :
             return super().list(request)
         else :
-            m=request.user.machine_set.get(user=request.user.username)
-    def destroy(self, request, pk=None):
+            try :
+                m=request.user.machine_set.get(user=request.user.username)
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            qrs=m.qr_set.all()
+            qr_jsons=serializers.serialize('json',qrs)
+            return JsonResponse(qr_jsons,status=200)
+          
+    def retrieve(self, request,pk=None):
         if request.user.is_staff :
-            return super().destroy(request,pk)
+            return super().retrieve(request,pk)
         else :
-            return HttpResponse(status=405)       
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)    
+    
     
 def find_point(gps_string):
 
@@ -150,14 +161,27 @@ class GPSViewset(ModelViewSet):
         if request.user.is_staff :
             return super().list(request)
         else :
-            return HttpResponse(status=405)
+            try :
+                m=request.user.machine_set.get(user=request.user.username)
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            gpss=m.gps_set.all()
+            gps_jsons=serializers.serialize('json',gpss)
+            return JsonResponse(gps_jsons,status=200)
+        
     def destroy(self, request, pk=None):
         if request.user.is_staff :
             return super().destroy(request,pk)
         else :
-            return HttpResponse(status=405)     
+            return HttpResponse(status=405)    
+    def retrieve(self, request,pk=None):
+        if request.user.is_staff :
+            return super().retrieve(request,pk)
+        else :
+            
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
 
-class SensorViewset(ModelViewSet):
+class SensorViewset(ReadOnlyModelViewSet):
     queryset=Sensor.objects.all()
     serializer_class=SensorSerializer
     permission_classes=[AllowAny] # for 통신 테스트 with 고등기술연구원.
@@ -165,24 +189,29 @@ class SensorViewset(ModelViewSet):
     #authentication_classes=[TokenAuthentication] 
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
+    
+# test를 위해서 잠시 보안 관련된 것은 접어놓는다.
 #     def list(self, request):
 #         if request.user.is_staff :
 #             return super().list(request)
 #         else :
-#             return HttpResponse(status=405)
+#             try :
+#                 m=request.user.machine_set.get(user=request.user.username)
+#             except :
+#                 return HttpResponse("No machine registered in that user.", status=405)
+#             sensors=m.sensor_set.all()
+#             sensor_jsons=serializers.serialize('json',sensors)
+#             return JsonResponse(sensor_jsons,status=200)
+        
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
             return super().retrieve(request,pk)
         else :
             
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
-    def destroy(self, request, pk=None):
-        if request.user.is_staff :
-            return super().destroy(request,pk)
-        else :
-            return HttpResponse(status=405)   
 
-class AirKoreaViewset(ModelViewSet):
+
+class AirKoreaViewset(ReadOnlyModelViewSet):
     queryset=AirKorea.objects.all()
     serializer_class=AirKoreaSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
@@ -193,12 +222,19 @@ class AirKoreaViewset(ModelViewSet):
         if request.user.is_staff :
             return super().list(request)
         else :
-            return HttpResponse(status=405)
-    def destroy(self, request, pk=None):
+            try :
+                m=request.user.machine_set.get(user=request.user.username)
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            airkoreas=m.airkorea_set.all()
+            airkorea_jsons=serializers.serialize('json',airkoreas)
+            return JsonResponse(airkorea_jsons,status=200)
+        
+    def retrieve(self, request,pk=None):
         if request.user.is_staff :
-            return super().destroy(request,pk)
+            return super().retrieve(request,pk)
         else :
-            return HttpResponse(status=405)   
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)   
         
 class SevenDaysViewset(ReadOnlyModelViewSet):
     queryset=Seven_Days.objects.all()
@@ -211,12 +247,18 @@ class SevenDaysViewset(ReadOnlyModelViewSet):
         if request.user.is_staff :
             return super().list(request)
         else :
-            return HttpResponse(status=405)
-    def destroy(self, request, pk=None):
+            try :
+                m=request.user.machine_set.get(user=request.user.username)
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            sevendayss=m.sevendays_set.all()
+            sevendays_jsons=serializers.serialize('json',sevendayss)
+            return JsonResponse(sevendays_jsons,status=200)
+    def retrieve(self, request,pk=None):
         if request.user.is_staff :
-            return super().destroy(request,pk)
+            return super().retrieve(request,pk)
         else :
-            return HttpResponse(status=405)     
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)   
         
 class ThirtyDaysViewset(ReadOnlyModelViewSet):
     queryset=Thirty_Days.objects.all()
@@ -229,12 +271,18 @@ class ThirtyDaysViewset(ReadOnlyModelViewSet):
         if request.user.is_staff :
             return super().list(request)
         else :
-            return HttpResponse(status=405)
-    def destroy(self, request, pk=None):
+            try :
+                m=request.user.machine_set.get(user=request.user.username)
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            thirtydayss=m.thirtydays_set.all()
+            thirtydays_jsons=serializers.serialize('json',thirtydayss)
+            return JsonResponse(thirtydays_jsons,status=200)
+    def retrieve(self, request,pk=None):
         if request.user.is_staff :
-            return super().destroy(request,pk)
+            return super().retrieve(request,pk)
         else :
-            return HttpResponse(status=405)   
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)   
 
 # @csrf_exempt
 # def machines_list(request):
