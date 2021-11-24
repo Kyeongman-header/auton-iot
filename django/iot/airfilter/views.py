@@ -35,6 +35,7 @@ class MyUserViewset(ModelViewSet):
         else :
             return HttpResponse(status=405)
 
+
     
 def hash_machineid(raw_id):
     data=(raw_id).encode()
@@ -48,7 +49,7 @@ def hash_machineid(raw_id):
 class MachineViewset(ModelViewSet):
     queryset=Machine.objects.all()
     serializer_class=MachineSerializer
-    permission_classes=[IsAdminUser,]
+    permission_classes=[IsAuthenticated,]
     authentication_classes=[TokenAuthentication]
     def create(self, request):
         data = JSONParser().parse(request)
@@ -71,6 +72,17 @@ class MachineViewset(ModelViewSet):
             return JsonResponse({ 'id' : m.id},status=201)
         return HttpResponse(status=500)
     
+    def list(self, request):
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            return HttpResponse(status=405)        
+    def destroy(self, request, pk=None):
+        if request.user.is_staff :
+            return super().destroy(request,pk)
+        else :
+            return HttpResponse(status=405)         
+    
 class QRViewset(ReadOnlyModelViewSet):
     queryset=QR.objects.all()
     serializer_class=QRSerializer
@@ -79,7 +91,11 @@ class QRViewset(ReadOnlyModelViewSet):
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
     #authentication_classes=[SessionAuthentication,BasicAuthentication]
-    
+    def destroy(self, request, pk=None):
+        if request.user.is_staff :
+            return super().destroy(request,pk)
+        else :
+            return HttpResponse(status=405)       
     
 def find_point(gps_string):
 
@@ -99,11 +115,8 @@ class GPSViewset(ModelViewSet):
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
     
-
-    @action(detail=False,methods=['post'])
-    def update_airkorea(self, request):
+    def create(self, request):
         data = JSONParser().parse(request)
-            
         serializer = GPSSerializer(data=data)
         
         if serializer.is_valid():
@@ -130,7 +143,11 @@ class GPSViewset(ModelViewSet):
             return super().list(request)
         else :
             return HttpResponse(status=405)
-
+    def destroy(self, request, pk=None):
+        if request.user.is_staff :
+            return super().destroy(request,pk)
+        else :
+            return HttpResponse(status=405)     
 
 class SensorViewset(ModelViewSet):
     queryset=Sensor.objects.all()
@@ -151,6 +168,11 @@ class SensorViewset(ModelViewSet):
         else :
             
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
+    def destroy(self, request, pk=None):
+        if request.user.is_staff :
+            return super().destroy(request,pk)
+        else :
+            return HttpResponse(status=405)   
 
 class AirKoreaViewset(ModelViewSet):
     queryset=AirKorea.objects.all()
@@ -164,7 +186,12 @@ class AirKoreaViewset(ModelViewSet):
             return super().list(request)
         else :
             return HttpResponse(status=405)
-
+    def destroy(self, request, pk=None):
+        if request.user.is_staff :
+            return super().destroy(request,pk)
+        else :
+            return HttpResponse(status=405)   
+        
 class SevenDaysViewset(ReadOnlyModelViewSet):
     queryset=Seven_Days.objects.all()
     serializer_class=SevenDaysSerializer
@@ -177,7 +204,12 @@ class SevenDaysViewset(ReadOnlyModelViewSet):
             return super().list(request)
         else :
             return HttpResponse(status=405)
-
+    def destroy(self, request, pk=None):
+        if request.user.is_staff :
+            return super().destroy(request,pk)
+        else :
+            return HttpResponse(status=405)     
+        
 class ThirtyDaysViewset(ReadOnlyModelViewSet):
     queryset=Thirty_Days.objects.all()
     serializer_class=ThirtyDaysSerializer
@@ -190,7 +222,11 @@ class ThirtyDaysViewset(ReadOnlyModelViewSet):
             return super().list(request)
         else :
             return HttpResponse(status=405)
-
+    def destroy(self, request, pk=None):
+        if request.user.is_staff :
+            return super().destroy(request,pk)
+        else :
+            return HttpResponse(status=405)   
 
 # @csrf_exempt
 # def machines_list(request):
