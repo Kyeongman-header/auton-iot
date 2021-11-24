@@ -145,6 +145,12 @@ class SensorViewset(ModelViewSet):
 #             return super().list(request)
 #         else :
 #             return HttpResponse(status=405)
+    def retrieve(self, request,pk=None):
+        if requests.user.is_staff :
+            return super().retireve(request)
+        else :
+            
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
 
 class AirKoreaViewset(ModelViewSet):
     queryset=AirKorea.objects.all()
