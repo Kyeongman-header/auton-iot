@@ -26,25 +26,8 @@ class MyUserViewset(ReadOnlyModelViewSet):
     queryset=MyUser.objects.all()
     serializer_class=MyUserSerializer
     permission_classes=[IsAdminUser]
-    #authentication_classes=[TokenAuthentication]
-#     filter_backends=(DjangoFilterBackend,)
-#     filter_fields={'username'}
-#     def list(self, request):
-#         if request.user.is_staff :
-#             return super().list(request)
-#         else :
-#             return HttpResponse(status=405)
-#     def destroy(self, request, pk=None):
-#         if request.user.is_staff :
-#             return super().destroy(request,pk)
-#         else :
-#             return HttpResponse(status=405)
-        
-#     def retrieve(self, request,pk=None):
-#         if request.user.is_staff :
-#             return super().retrieve(request,pk)
-#         else :
-#             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)    
+    authentication_classes=[TokenAuthentication]
+
     
 def hash_machineid(raw_id):
     data=(raw_id).encode()
@@ -164,7 +147,7 @@ class GPSViewset(ModelViewSet):
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             gpss=m.gps_set.all()
-            gps_jsons=serializers.serialize('json',gpss)
+            gps_jsons=GPSSerializers.serialize(gpss,many=True).data
             return JsonResponse(gps_jsons,status=200,safe=False)
         
     def destroy(self, request, pk=None):
@@ -198,7 +181,7 @@ class SensorViewset(ReadOnlyModelViewSet):
 #             except :
 #                 return HttpResponse("No machine registered in that user.", status=405)
 #             sensors=m.sensor_set.all()
-#             sensor_jsons=serializers.serialize('json',sensors)
+#             sensor_jsons=SensorSerializer(sensors,many=True).data
 #             return JsonResponse(sensor_jsons,status=200,safe=False)
         
     def retrieve(self, request,pk=None):
@@ -226,8 +209,8 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
                 return HttpResponse("No machine registered in that user.", status=405)
             airkoreas=m.airkorea_set.all()
             
-            airkorea_jsons=serializers.serialize('json',airkoreas)
-            return JsonResponse(airkorea_jsons,status=200,safe=False)
+            airkorea_jsons=AirKoreaSerializer(airkoreas,many=True).data
+            return JsonResponse(airkorea_jsons,status=200)
         
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
@@ -251,7 +234,7 @@ class SevenDaysViewset(ReadOnlyModelViewSet):
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             sevendayss=m.sevendays_set.all()
-            sevendays_jsons=serializers.serialize('json',sevendayss)
+            sevendays_jsons=SevenDaysSerializer(sevendayss,many=True).data
             return JsonResponse(sevendays_jsons,status=200,safe=False)
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
@@ -275,7 +258,7 @@ class ThirtyDaysViewset(ReadOnlyModelViewSet):
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             thirtydayss=m.thirtydays_set.all()
-            thirtydays_jsons=serializers.serialize('json',thirtydayss)
+            thirtydays_jsons=ThirtyDaysSerializer(thirtydayss,many=True).data
             return JsonResponse(thirtydays_jsons,status=200,safe=False)
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
