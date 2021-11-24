@@ -83,6 +83,9 @@ class MachineViewset(ModelViewSet):
         else :
             return HttpResponse(status=405)         
     
+    
+    
+    
 class QRViewset(ReadOnlyModelViewSet):
     queryset=QR.objects.all()
     serializer_class=QRSerializer
@@ -91,6 +94,11 @@ class QRViewset(ReadOnlyModelViewSet):
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
     #authentication_classes=[SessionAuthentication,BasicAuthentication]
+    def list(self, request):
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            m=request.user.machine_set.get(user=request.user.username)
     def destroy(self, request, pk=None):
         if request.user.is_staff :
             return super().destroy(request,pk)
