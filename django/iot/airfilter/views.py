@@ -147,7 +147,7 @@ class SensorViewset(ModelViewSet):
 #             return HttpResponse(status=405)
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
-            return super().retireve(request,pk)
+            return super().retrieve(request,pk)
         else :
             
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
