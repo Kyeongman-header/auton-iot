@@ -24,7 +24,7 @@ Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 # Create your views here.
 
 
-class OnlyMQTTSensorAdder(mixins.CreateModelMixin):
+class OnlyMQTTSensorAdd(mixins.CreateModelMixin):
     queryset = Sensor.objects.all()
     serializer_class = SensorSerializer
     permission_classes=[IsAdminUser]
