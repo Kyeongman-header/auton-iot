@@ -10,7 +10,7 @@ class Machine(models.Model):
     user=models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.SET_DEFAULT,blank=True,null=True,default=None)
     id=models.CharField(primary_key=True,max_length=200)
     car_number=models.CharField(max_length=20,blank=True,null=True)
-    pub_date=models.DateTimeField(default=timezone.localtime())
+    pub_date=models.DateTimeField(default=timezone.localtime)
 
     def __str__(self):
         return str(self.id)
@@ -18,7 +18,7 @@ class Machine(models.Model):
 class GPS(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     gps=models.PointField()
-    pub_date=models.DateTimeField(default=timezone.localtime(),null=True)
+    pub_date=models.DateTimeField(default=timezone.localtime,null=True)
     
     def __str__(self):
         return str(self.gps)
@@ -28,7 +28,7 @@ class QR(models.Model):
     raw_id=models.CharField(max_length=200,null=True,blank=True)
     qr=models.URLField()
     
-    pub_date=models.DateTimeField(default=timezone.localtime())
+    pub_date=models.DateTimeField(default=timezone.localtime)
     
     def __str__(self):
         return str(self.qr)
@@ -59,7 +59,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     
     is_active=models.BooleanField(default=True)
     is_admin=models.BooleanField(default=False)
-    date_joined=models.DateTimeField(default=timezone.localtime())
+    date_joined=models.DateTimeField(default=timezone.localtime)
     objects=UserManager()
     USERNAME_FIELD='username'
     REQUIRED_FIELDS=['password']
@@ -81,14 +81,14 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 class Sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     sensor=models.JSONField()
-    pub_date=models.DateTimeField('sensor date published',default=timezone.localtime())
+    pub_date=models.DateTimeField('sensor date published',default=timezone.localtime)
     def __str__(self):
         return str(self.sensor)
 
 class AirKorea(models.Model):
     machine=models.ForeignKey(Machine, on_delete=models.CASCADE)
     airkorea=models.JSONField()
-    pub_date=models.DateTimeField('airkor date published',default=timezone.localtime())
+    pub_date=models.DateTimeField('airkor date published',default=timezone.localtime)
     def __str__(self):
         return str(self.airkorea)
 
@@ -99,7 +99,7 @@ class Seven_Days(models.Model):
     seven_days_sensor_max=models.JSONField(blank=True,null=True)
     seven_days_airkorea_avg=models.JSONField(blank=True,null=True)
     seven_days_airkorea_max=models.JSONField(blank=True,null=True)
-    pub_date=models.DateTimeField('Seven days data published',default=timezone.localtime())
+    pub_date=models.DateTimeField('Seven days data published',default=timezone.localtime)
 
 class Thirty_Days(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
@@ -107,4 +107,4 @@ class Thirty_Days(models.Model):
     thirty_days_sensor_max=models.JSONField(blank=True,null=True)
     thirty_days_airkorea_avg=models.JSONField(blank=True,null=True)
     thirty_days_airkorea_max=models.JSONField(blank=True,null=True)
-    pub_date=models.DateTimeField('Thirty days data published',default=timezone.localtime())
+    pub_date=models.DateTimeField('Thirty days data published',default=timezone.localtime)
