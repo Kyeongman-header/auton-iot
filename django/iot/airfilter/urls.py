@@ -12,10 +12,11 @@ router.register('sensor',views.SensorViewset)
 router.register('airkorea',views.AirKoreaViewset)
 router.register('seven_days',views.SevenDaysViewset)
 router.register('thirty_days',views.ThirtyDaysViewset)
-router.register('onlymqttsensoradd',views.OnlyMQTTSensorAdd)
+
 
 
 urlpatterns=[
+    path('mqtt_postgres/',views.OnlyMQTTSensorAdd.as_view())
     path('api/',include(router.urls)),
     #url(r'^api-auth/',include('rest_framework.urls',namespace='rest_framework'))
     ]
