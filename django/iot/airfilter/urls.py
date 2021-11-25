@@ -16,7 +16,7 @@ router.register('thirty_days',views.ThirtyDaysViewset)
 
 
 urlpatterns=[
-    path('mqtt_postgres/',views.OnlyMQTTSensorAdd.as_view())
+    path('mqtt_postgres/',views.OnlyMQTTSensorAdd.as_view()),
     path('api/',include(router.urls)),
     #url(r'^api-auth/',include('rest_framework.urls',namespace='rest_framework'))
     ]
