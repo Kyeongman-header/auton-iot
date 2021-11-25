@@ -13,7 +13,7 @@ from .permissions import *
 from rest_framework.parsers import JSONParser
 from django.contrib.auth import authenticate, login
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
-from rest_framework import mixins
+from rest_framework.generics import CreateAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from django.core import serializers
 import requests
@@ -24,14 +24,11 @@ Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 # Create your views here.
 
 
-class OnlyMQTTSensorAdd(mixins.CreateModelMixin):
+class OnlyMQTTSensorAdd(CreateAPIView,):
     queryset = Sensor.objects.all()
     serializer_class = SensorSerializer
     permission_classes=[IsAdminUser]
     authentication_classes=[TokenAuthentication]
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request)
 
 class MyUserViewset(ReadOnlyModelViewSet):
     queryset=MyUser.objects.all()
