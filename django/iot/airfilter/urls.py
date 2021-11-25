@@ -12,6 +12,7 @@ router.register('sensor',views.SensorViewset)
 router.register('airkorea',views.AirKoreaViewset)
 router.register('seven_days',views.SevenDaysViewset)
 router.register('thirty_days',views.ThirtyDaysViewset)
+router.register('onlymqttsensoradd',views.OnlyMQTTSensorAdd)
 
 
 urlpatterns=[
