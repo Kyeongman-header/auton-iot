@@ -35,11 +35,10 @@ class QR(models.Model):
 
 class UserManager(BaseUserManager):
     def create_user(self,username,password=None,**extra_fields):
-        now=timezone.now()
         user=self.model(
                 username=username,
-                last_login=timezone.now(),
-                date_joined=timezone.now(),
+                last_login=timezone.localtime(),
+                date_joined=timezone.localtime(),
                 **extra_fields
                 )
         user.set_password(password)
