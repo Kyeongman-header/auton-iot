@@ -13,7 +13,7 @@ class QRSerializer(serializers.ModelSerializer):
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model=MyUser
-        fields=['username','password']
+        fields=['username','password','last_login']
 class SensorSerializer(serializers.ModelSerializer):
     class Meta:
         model=Sensor
