@@ -161,7 +161,8 @@ class GPSViewset(ModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            gpss=m.gps_set.all()
+            
+            gpss=m.gps_set.all() # gps 데이터는 상용 단계에서 저장되지 않는다. 
             gps_jsons=GPSSerializer(gpss,many=True).data
             return JsonResponse(gps_jsons,status=200,safe=False)
         
@@ -188,6 +189,7 @@ class SensorViewset(ReadOnlyModelViewSet):
     
 # test를 위해서 잠시 보안 관련된 것은 접어놓는다.
 #     def list(self, request):
+
 #         if request.user.is_staff :
 #             return super().list(request)
 #         else :
@@ -195,7 +197,7 @@ class SensorViewset(ReadOnlyModelViewSet):
 #                 m=request.user.machine
 #             except :
 #                 return HttpResponse("No machine registered in that user.", status=405)
-#             sensors=m.sensor_set.all()
+#             sensors=m.sensor_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
 #             sensor_jsons=SensorSerializer(sensors,many=True).data
 #             return JsonResponse(sensor_jsons,status=200,safe=False,safe=False)
         
@@ -222,7 +224,7 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            airkoreas=m.airkorea_set.all()
+            airkoreas=m.airkorea_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
             
             airkorea_jsons=AirKoreaSerializer(airkoreas,many=True).data
             return JsonResponse(airkorea_jsons,status=200,safe=False)
@@ -248,7 +250,7 @@ class SevenDaysViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            sevendayss=m.seven_days_set.all()
+            sevendayss=m.seven_days_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
             sevendays_jsons=SevenDaysSerializer(sevendayss,many=True).data
             return JsonResponse(sevendays_jsons,status=200,safe=False)
     def retrieve(self, request,pk=None):
@@ -272,7 +274,7 @@ class ThirtyDaysViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            thirtydayss=m.thirty_days_set.all()
+            thirtydayss=m.thirty_days_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
             thirtydays_jsons=ThirtyDaysSerializer(thirtydayss,many=True).data
             return JsonResponse(thirtydays_jsons,status=200,safe=False)
     def retrieve(self, request,pk=None):
