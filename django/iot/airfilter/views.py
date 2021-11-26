@@ -50,6 +50,13 @@ class MachineViewset(ModelViewSet):
     permission_classes=[IsAuthenticated,]
     authentication_classes=[TokenAuthentication]
     
+    def partial_update(self, request, pk=None):
+        instance = self.queryset.get(pk=kwargs.get('pk'))
+        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
     def create(self, request):
         # 생성 작업은 admin과 factory만 가능하다.
         if not request.user.is_staff :
