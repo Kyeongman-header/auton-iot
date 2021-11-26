@@ -34,9 +34,9 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal=()
 
 class MachineAdmin(admin.ModelAdmin):
-    list_display=('id','car_number','pub_date')
-    list_filter=['id','car_number','pub_date']
-    search_fields=['id','car_number','pub_date']
+    list_display=('id','car_number','pub_date','user')
+    list_filter=['id','car_number','pub_date','user']
+    search_fields=['id','car_number','pub_date','user']
 class GPSAdmin(OSMGeoAdmin):
     list_display=('pub_date','gps','machine')
     list_filter=('machine','pub_date')
