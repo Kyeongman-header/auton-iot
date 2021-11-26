@@ -188,19 +188,19 @@ class SensorViewset(ReadOnlyModelViewSet):
     filter_fields={'machine'}
     
 # test를 위해서 잠시 보안 관련된 것은 접어놓는다.
-    def list(self, request):
-        user=request.user.last_login=timezone.localtime()
-        user.save(update_fields=['last_login'])
-        if request.user.is_staff :
-            return super().list(request)
-        else :
-            try :
-                m=request.user.machine
-            except :
-                return HttpResponse("No machine registered in that user.", status=405)
-            sensors=m.sensor_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
-            sensor_jsons=SensorSerializer(sensors,many=True).data
-            return JsonResponse(sensor_jsons,status=200,safe=False,safe=False)
+#     def list(self, request):
+#         user=request.user.last_login=timezone.localtime()
+#         user.save(update_fields=['last_login'])
+#         if request.user.is_staff :
+#             return super().list(request)
+#         else :
+#             try :
+#                 m=request.user.machine
+#             except :
+#                 return HttpResponse("No machine registered in that user.", status=405)
+#             sensors=m.sensor_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
+#             sensor_jsons=SensorSerializer(sensors,many=True).data
+#             return JsonResponse(sensor_jsons,status=200,safe=False)
         
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
