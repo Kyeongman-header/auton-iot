@@ -6,8 +6,34 @@ from django.db.models.functions import Cast
 from django.db.models import FloatField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 
+
+def deleter():
+    now=datetime.datetime.now()
+    
+    #m_all=Machine.objects.filter(pub_date__lte=(now-datetime.timedelta(weeks=)) # 머신은 단순히 기간 종료가 있지는 않을듯.
+    
+    try :
+        Sensor.objects.filter(pub_date__lte=(now-datetime.timedelta(weeks=4))).delete()
+    except :
+        print(f"Erro : deleting cron job : sensor. \n")
+                        
+    
+    try :
+        AirKorea.objects.filter(pub_date__lte=(now-datetime.timedelta(weeks=4))).delete()
+    except:
+        print(f"Erro : deleting cron job : airkorea. \n")
+    try :
+        GPS.objects.filter(pub_date__lte=(now-datetime.timedelta(weeks=4))).delete()
+    except:
+        print(f"Erro : deleting cron job : gps. \n")
+    try :    
+        MyUser.objects.filter(last_login__lte=(now-datetime.timedelta(weeks=4))).delete()
+    except:
+        print(f"Erro : deleting cron job : myuser. \n")
+    
+    
+
 def seven_thirty_days():
-    print("test")
     m_all=Machine.objects.all()
     now=datetime.datetime.now()
     for i in m_all:
