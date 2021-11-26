@@ -50,7 +50,7 @@ class MachineViewset(ModelViewSet):
     permission_classes=[IsAuthenticated,]
     authentication_classes=[TokenAuthentication]
     
-    def partial_update(self, request, pk=None):
+    def partial_update(self, request,*args, **kwargs):
         instance = self.queryset.get(pk=kwargs.get('pk'))
         serializer = self.serializer_class(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
