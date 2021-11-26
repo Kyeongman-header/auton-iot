@@ -189,7 +189,8 @@ class SensorViewset(ReadOnlyModelViewSet):
     
 # test를 위해서 잠시 보안 관련된 것은 접어놓는다.
 #     def list(self, request):
-#         user=request.user.last_login=timezone.localtime()
+#         user=request.user
+#         user.last_login=timezone.localtime()
 #         user.save(update_fields=['last_login'])
 #         if request.user.is_staff :
 #             return super().list(request)
@@ -218,7 +219,8 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
     def list(self, request):
-        user=request.user.last_login=timezone.localtime()
+        user=request.user
+        user.last_login=timezone.localtime()
         user.save(update_fields=['last_login'])
         if request.user.is_staff :
             return super().list(request)
@@ -246,7 +248,8 @@ class SevenDaysViewset(ReadOnlyModelViewSet):
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
     def list(self, request):
-        user=request.user.last_login=timezone.localtime()
+        user=request.user
+        user.last_login=timezone.localtime()
         user.save(update_fields=['last_login'])
         if request.user.is_staff :
             return super().list(request)
@@ -272,7 +275,8 @@ class ThirtyDaysViewset(ReadOnlyModelViewSet):
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
     def list(self, request):
-        user=request.user.last_login=timezone.localtime()
+        user=request.user
+        user.last_login=timezone.localtime()
         user.save(update_fields=['last_login'])
         if request.user.is_staff :
             return super().list(request)
