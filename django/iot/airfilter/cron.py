@@ -1,7 +1,7 @@
 from .models import *
 from django.db.models import Avg, Max
 import datetime
-from .lists import sensor_list
+from .lists import sensor_list, airkorea_list
 from django.db.models.functions import Cast
 from django.db.models import FloatField
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
