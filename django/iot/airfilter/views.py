@@ -66,8 +66,10 @@ class MachineViewset(ModelViewSet):
         if serializer.is_valid():
             
             id=serializer.data['id']
-            
-            machine_id=hash_machineid(raw_id=id)
+            machine_id=id
+            # for only 고등기술연구원 test. 
+            # 이후 다시 밑의 코드를 사용할것!!!!!
+        #    machine_id=hash_machineid(raw_id=id)
         # raw id를 hash화 시킴.
             try :
                 m=Machine.objects.create(id=machine_id)
