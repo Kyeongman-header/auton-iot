@@ -48,3 +48,15 @@ then
 	printf "django-rest-auth was not installed in pip. installing that library.\n" >> /tmp/code_deploy_scripts_checker.log
 	pip install django-rest-auth django-allauth
 fi
+
+if [ ! -d /usr/local/lib/python3.8/dist-packages/django_rest_auth ]
+then
+	printf "django-rest-auth was not installed in pip. installing that library.\n" >> /tmp/code_deploy_scripts_checker.log
+	pip install django-rest-auth django-allauth
+fi
+
+if [ ! -d /usr/local/lib/python3.8/dist-packages/corsheaders ]
+then
+	printf "corsheaders was not installed in pip. installing that library.\n" >> /tmp/code_deploy_scripts_checker.log
+	pip install django-cors-headers
+fi
