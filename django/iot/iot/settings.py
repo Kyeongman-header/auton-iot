@@ -45,7 +45,7 @@ CRONJOBS=[
  ]
 
 INSTALLED_APPS = [
-
+    'corsheaders',
     'django_crontab',
     'django_filters',
     'rest_auth',
@@ -99,6 +99,7 @@ REST_FRAMEWORK={
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -107,6 +108,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+#CORS_ORIGIN_WHITELIST = ()
 
 ROOT_URLCONF = 'iot.urls'
 
