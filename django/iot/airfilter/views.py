@@ -37,7 +37,8 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             serializer_sensor.save()
             m=Machine.objects.get(id=serializer_sensor.data['machine'])
             m.airkorea_set.create(airkorea={'P.M 2.5' : data['P.M 2.5_2'], 'CO' : 0,'SO2' : 0,'O3' : 0,'NO2' : 0,'khai' : 0})
-            return JsonResponse(serializer_sensor.data,status=201)
+            
+        return JsonResponse(serializer_sensor.data,status=201)
 
 class MyUserViewset(ReadOnlyModelViewSet):
     queryset=MyUser.objects.all()
