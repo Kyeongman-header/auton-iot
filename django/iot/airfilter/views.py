@@ -104,7 +104,6 @@ class QRViewset(ReadOnlyModelViewSet):
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
-    #authentication_classes=[SessionAuthentication,BasicAuthentication]
 
     
     
@@ -189,6 +188,17 @@ class SensorViewset(ReadOnlyModelViewSet):
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
     
+    def create(self, request): # 임시로, sensor가 전송될때 P.M 2.5 _ 2 값을 AIR KOREA 값으로 전송한다.(가장 정확한 외부 공기질) (그러나 상용화 단계에선 어차피 못씀. 걍 지워버리면 되는 코드임.)
+        data = JSONParser().parse(request)
+        serializer_sensor=SensorSerializer(data=data)
+
+        if serializer_sensor.is_valid() :
+            serializer_sensor.save()
+            m=Machine.objects.get(id=serializer_sensor.data['machine'])
+            m.airkorea_set.create(airkorea={'P.M 2.5' : data['P.M 2.5_2'], 'CO' : 0,'SO2' : 0,'O3' : 0,'NO2' : 0,'khai' : 0})
+            return JsonResponse(serializer_sensor.data,status=201)
+        
+            
 # test를 위해서 잠시 보안 관련된 것은 접어놓는다.
 #     def list(self, request):
 #         user=request.user
