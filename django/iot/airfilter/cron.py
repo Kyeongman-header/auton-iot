@@ -118,8 +118,8 @@ def thirty_days(id):
         for a in airkorea_list:
             avg_airkorea=airkoreas.annotate(float_val=Cast(KeyTextTransform(a, 'airkorea'),FloatField())).aggregate(Avg('float_val'))['float_val__avg']
             max_airkorea=airkoreas.annotate(float_val=Cast(KeyTextTransform(a, 'airkorea'),FloatField())).aggregate(Max('float_val'))['float_val__max']
-            seven_days_airkorea_avg_json[a] = avg_airkorea
-            seven_days_airkorea_max_json[a] = max_airkorea  
+            thirty_days_airkorea_avg_json[a] = avg_airkorea
+            thirty_days_airkorea_max_json[a] = max_airkorea  
         
         m.thirty_days_set.create(thirty_days_sensor_avg=thirty_days_sensor_avg_json,thirty_days_sensor_max=thirty_days_sensor_max_json,thirty_days_airkorea_avg=thirty_days_airkorea_avg_json,thirty_days_airkorea_max=thirty_days_airkorea_max_json,pub_date=sensors.first().pub_date)
         
