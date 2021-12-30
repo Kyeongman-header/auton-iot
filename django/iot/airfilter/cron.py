@@ -56,7 +56,7 @@ def seven_days(id):
         airkoreas=m.airkorea_set.filter(pub_date__gte=(now-datetime.timedelta(days=i)),pub_date__lte=(now-datetime.timedelta(days=i-1))).all()
         i=i-1
         if sensors.count()==0 or airkoreas.count() == 0:
-            m.seven_days_set.create(pub_date=now-datetime.timedelta(days=i))
+            m.seven_days_set.create(pub_date=now-datetime.timedelta(days=i+1))
             m.save()
             print(f"seven_days_cron : {i} day does not exists\n")
             continue
@@ -100,7 +100,7 @@ def thirty_days(id):
 
         i=i-1
         if sensors.count()==0 or airkoreas.count()==0 :
-            m.thirty_days_set.create(pub_date=now-datetime.timedelta(days=i))
+            m.thirty_days_set.create(pub_date=now-datetime.timedelta(days=i+1))
             m.save()
             print(f"thirty_days_cron : {i} week does not exists.\n")
             continue
