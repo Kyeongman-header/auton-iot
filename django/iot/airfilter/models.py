@@ -102,7 +102,7 @@ class Days_sensor(models.Model):
    days=models.FloatField(null=true, blank=true)
      def __str__(self):
         return str(self.sensor)
-class weeks_sensor(models.Model):
+class Weeks_sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     pub_date=models.DateTimeField('weeks date published',default=timezone.localtime)
     weeks=models.FloatField(null=true, blank=true)
