@@ -20,6 +20,7 @@ from django.core import serializers
 import requests
 import hashlib
 import datetime
+from django.utils import timezone
 
 Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 # Create your views here.
@@ -62,7 +63,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                 m.days_sensor_set.create(days=data['sensor']['P.M 2.5'], number=1)
                 
             if m.weeks_sensor_set.exists() :    
-                if  (datetime.datetime.now() - m.weeks_sensor_set.last().pub_date).days/7 < 1:
+                if  (datetime.datetime.now(timezone.utc) - m.weeks_sensor_set.last().pub_date).days/7 < 1:
                     number=m.weeks_sensor_set.last().number
                     m.hours_sensor_set.last().weeks=((m.weeks_sensor_set.last().weeks*number) + data['sensor']['P.M 2.5']) / (number+1) 
                     m.hours_sensor_set.last().number=number+1
