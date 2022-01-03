@@ -16,6 +16,21 @@ class WeeksSensorSerializer(serializers.ModelSerializer):
         model=Weeks_sensor
         fields=['machine','weeks','pub_date']
         
+class HoursSensorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Hours_airkorea
+        fields=['machine','hours','pub_date']
+
+class DaysSensorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Days_airkorea
+        fields=['machine','days','pub_date']
+
+class WeeksSensorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Weeks_airkorea
+        fields=['machine','weeks','pub_date'] 
+        
 class GPSSerializer(serializers.ModelSerializer):
     class Meta:
         model=GPS
