@@ -245,7 +245,7 @@ class SensorViewset(ReadOnlyModelViewSet):
         #날짜를 pick하기 위한 사용자 정의 필터.
 class TimeRangeFilter(filters.FilterSet):
     pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
-    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte;)
+    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
     class Meta:
         model = Event
         fields = ['machine','pub_date_gte','pub_date_lte']
