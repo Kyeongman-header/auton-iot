@@ -87,23 +87,24 @@ class Sensor(models.Model):
 class AirKorea(models.Model):
     machine=models.ForeignKey(Machine, on_delete=models.CASCADE)
     airkorea=models.JSONField()
-    pub_date=models.DateTimeField('airkor date published',default=timezone.localtime)
+    pub_date=models.DateTimeField('airkorea date published',default=timezone.localtime)
     def __str__(self):
         return str(self.airkorea)
-
-class Seven_Days(models.Model):
-
+class Hours_sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
-    seven_days_sensor_avg=models.JSONField(blank=True,null=True)
-    seven_days_sensor_max=models.JSONField(blank=True,null=True)
-    seven_days_airkorea_avg=models.JSONField(blank=True,null=True)
-    seven_days_airkorea_max=models.JSONField(blank=True,null=True)
-    pub_date=models.DateTimeField('Seven days data published',default=timezone.localtime)
-
-class Thirty_Days(models.Model):
+    pub_date=models.DateTimeField('hours date published',default=timezone.localtime)
+    hours=models.FloatField(null=true, blank=true)
+     def __str__(self):
+        return str(self.sensor)
+class Days_sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
-    thirty_days_sensor_avg=models.JSONField(blank=True,null=True)
-    thirty_days_sensor_max=models.JSONField(blank=True,null=True)
-    thirty_days_airkorea_avg=models.JSONField(blank=True,null=True)
-    thirty_days_airkorea_max=models.JSONField(blank=True,null=True)
-    pub_date=models.DateTimeField('Thirty days data published',default=timezone.localtime)
+    pub_date=models.DateTimeField('days date published',default=timezone.localtime)
+   days=models.FloatField(null=true, blank=true)
+     def __str__(self):
+        return str(self.sensor)
+class weeks_sensor(models.Model):
+    machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
+    pub_date=models.DateTimeField('weeks date published',default=timezone.localtime)
+    weeks=models.FloatField(null=true, blank=true)
+     def __str__(self):
+        return str(self.sensor)
