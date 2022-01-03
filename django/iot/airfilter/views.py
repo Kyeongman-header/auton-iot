@@ -329,7 +329,7 @@ class SensorViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            if(request.query_params['pub_date__gte'] != null && request.query_params['pub_date__lte']!=null):
+            if(request.query_params['pub_date__gte'] != null and request.query_params['pub_date__lte']!=null):
                 sensors=m.sensor_set.filter(pub_date__gte=request.query_params['pub_date__get'],pub_date__lte=request.query_params['pub_date__lte']).all()
                 sensors=sensors.last()
             else :
