@@ -67,15 +67,15 @@ class AirKoreaAdmin(admin.ModelAdmin):
     list_filter=('machine','pub_date')
     search_fields=['machine','pub_date','sensor']
     
-class SevenDaysAdmin(admin.ModelAdmin):
-    list_display=('pub_date','seven_days_sensor_avg','seven_days_sensor_max','seven_days_airkorea_avg','seven_days_airkorea_max','machine')
-    list_filter=['machine']
-    search_fields=['machine']
+# class SevenDaysAdmin(admin.ModelAdmin):
+#     list_display=('pub_date','seven_days_sensor_avg','seven_days_sensor_max','seven_days_airkorea_avg','seven_days_airkorea_max','machine')
+#     list_filter=['machine']
+#     search_fields=['machine']
     
-class ThirtyDaysAdmin(admin.ModelAdmin):
-    list_display=('pub_date','thirty_days_sensor_avg','thirty_days_sensor_max','thirty_days_airkorea_avg','thirty_days_airkorea_max','machine')
-    list_filter=['machine']
-    search_fields=['machine']
+# class ThirtyDaysAdmin(admin.ModelAdmin):
+#     list_display=('pub_date','thirty_days_sensor_avg','thirty_days_sensor_max','thirty_days_airkorea_avg','thirty_days_airkorea_max','machine')
+#     list_filter=['machine']
+#     search_fields=['machine']
 admin.site.register(Hours_sensor,HoursAdmin)
 admin.site.register(Days_sensor,DaysAdmin)
 admin.site.register(Weeks_sensor,WeeksAdmin)
@@ -86,5 +86,5 @@ admin.site.unregister(Group)
 admin.site.register(Machine,MachineAdmin)
 admin.site.register(Sensor,SensorAdmin)
 admin.site.register(AirKorea,AirKoreaAdmin)
-admin.site.register(Seven_Days,SevenDaysAdmin)
-admin.site.register(Thirty_Days,ThirtyDaysAdmin)
+# admin.site.register(Seven_Days,SevenDaysAdmin)
+# admin.site.register(Thirty_Days,ThirtyDaysAdmin)
