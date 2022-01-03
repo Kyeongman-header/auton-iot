@@ -39,6 +39,47 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             serializer_sensor.save()
             m=Machine.objects.get(id=serializer_sensor.data['machine'])
             m.airkorea_set.create(airkorea={'P.M 2.5' : data['sensor']['P.M 2.5_2'], 'CO' : 0,'SO2' : 0,'O3' : 0,'NO2' : 0,'khai' : 0})
+            air_data=m.airkorea_set.last()
+            if m.hours_airkorea_set.exists() :
+                if (datetime.datetime.now(timezone.utc)-m.hours_airkorea_set.last().pub_date).seconds<3600 :
+                    h=m.hours_airkorea_set.last()
+                    
+                    h.hours=((h.hours*h.number) + air_data['airkorea']['khai']) / (h.number+1) 
+                    h.number=h.number+1
+                    h.save()
+                else :
+                    m.hours_airkorea_set.create(hours=air_data['airkorea']['khai'], number=1)
+                    
+            else :
+                m.hours_airkorea_set.create(hours=air_data['airkorea']['khai'], number=1)
+
+                
+           
+            if m.days_airkorea_set.exists() :    
+                if (datetime.datetime.now(timezone.utc)-m.days_airkorea_set.last().pub_date).days<1 :
+                    d=m.days_airkorea_set.last()
+                    d.days=((d.days*d.number) + air_data['airkorea']['khai']) / (d.number+1) 
+                    d.number=d.number+1
+                    d.save()
+                else :
+                    m.days_airkorea_set.create(days=air_data['airkorea']['khai'], number=1)
+            else :
+                m.days_airkorea_set.create(days=air_data['airkorea']['khai'], number=1)
+                
+            if m.weeks_airkorea_set.exists() :    
+                if  (datetime.datetime.now(timezone.utc) - m.weeks_airkorea_set.last().pub_date).days/7 < 1:
+                    w=m.weeks_airkorea_set.last()
+                    w.weeks=((w.weeks*w.number) + air_data['airkorea']['khai']) / (w.number+1) 
+                    w.number=w.number+1
+                    w.save()
+                else :
+                    m.weeks_airkorea_set.create(weeks=air_data['airkorea']['khai'], number=1)
+            else :
+                m.weeks_airkorea_set.create(weeks=air_data['airkorea']['khai'], number=1)
+                
+                
+                
+                # ////////////////// air korea 업데이트. gps 가 정상적으로 들어올 때에 삭제.
             
             if m.hours_sensor_set.exists() :
                 if (datetime.datetime.now(timezone.utc)-m.hours_sensor_set.last().pub_date).seconds<3600 :
@@ -55,14 +96,12 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             else :
                 m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
 
-                
-           
             if m.days_sensor_set.exists() :    
                 if (datetime.datetime.now(timezone.utc)-m.days_sensor_set.last().pub_date).days<1 :
-                    number=m.days_sensor_set.last().number
-                    m.days_sensor_set.last().days=((m.days_sensor_set.last().days*number) + data['sensor']['P.M 2.5']) / (number+1) 
-                    m.days_sensor_set.last().number=number+1
-                    m.days_sensor_set.last().save()
+                    d=m.days_sensor_set.last()
+                    d.days=((d.days*d.number) + data['sensor']['P.M 2.5']) / (d.number+1) 
+                    d.number=d.number+1
+                    d.save()
                 else :
                     m.days_sensor_set.create(days=data['sensor']['P.M 2.5'], number=1)
             else :
@@ -70,10 +109,10 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                 
             if m.weeks_sensor_set.exists() :    
                 if  (datetime.datetime.now(timezone.utc) - m.weeks_sensor_set.last().pub_date).days/7 < 1:
-                    number=m.weeks_sensor_set.last().number
-                    m.hours_sensor_set.last().weeks=((m.weeks_sensor_set.last().weeks*number) + data['sensor']['P.M 2.5']) / (number+1) 
-                    m.hours_sensor_set.last().number=number+1
-                    m.hours_sensor_set.last().save()
+                    w=m.weeks_sensor_set.last()
+                    w.weeks=((w.weeks*w.number) + data['sensor']['P.M 2.5']) / (w.number+1) 
+                    w.number=w.number+1
+                    w.save()
                 else :
                     m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'], number=1)
             else :
@@ -202,6 +241,45 @@ class GPSViewset(ModelViewSet):
             ar=json.loads(output)
             m=Machine.objects.get(id=serializer.data['machine'])
             m.airkorea_set.create(airkorea=ar["airkorea"])
+            # airkorea가 업데이트 될때마다, airkorea에 대한 통계량들도 업데이트 된다.
+            air_data=m.airkorea_set.last()
+            if m.hours_airkorea_set.exists() :
+                if (datetime.datetime.now(timezone.utc)-m.hours_airkorea_set.last().pub_date).seconds<3600 :
+                    h=m.hours_airkorea_set.last()
+                    
+                    h.hours=((h.hours*h.number) + air_data['airkorea']['khai']) / (h.number+1) 
+                    h.number=h.number+1
+                    h.save()
+                else :
+                    m.hours_airkorea_set.create(hours=air_data['airkorea']['khai'], number=1)
+                    
+            else :
+                m.hours_airkorea_set.create(hours=air_data['airkorea']['khai'], number=1)
+
+                
+           
+            if m.days_airkorea_set.exists() :    
+                if (datetime.datetime.now(timezone.utc)-m.days_airkorea_set.last().pub_date).days<1 :
+                    d=m.days_airkorea_set.last()
+                    d.days=((d.days*d.number) + air_data['airkorea']['khai']) / (d.number+1) 
+                    d.number=d.number+1
+                    d.save()
+                else :
+                    m.days_airkorea_set.create(days=air_data['airkorea']['khai'], number=1)
+            else :
+                m.days_airkorea_set.create(days=air_data['airkorea']['khai'], number=1)
+                
+            if m.weeks_airkorea_set.exists() :    
+                if  (datetime.datetime.now(timezone.utc) - m.weeks_airkorea_set.last().pub_date).days/7 < 1:
+                    w=m.weeks_airkorea_set.last()
+                    w.weeks=((w.weeks*w.number) + air_data['airkorea']['khai']) / (w.number+1) 
+                    w.number=w.number+1
+                    w.save()
+                else :
+                    m.weeks_airkorea_set.create(weeks=air_data['airkorea']['khai'], number=1)
+            else :
+                m.weeks_airkorea_set.create(weeks=air_data['airkorea']['khai'], number=1)
+                
         
         return JsonResponse(serializer.data,status=201)
     
