@@ -329,9 +329,14 @@ class SensorViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            #sensors=m.sensor_set.last() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
+            if(request.query_params['pub_date__gte'] != null && request.query_params['pub_date__lte']!=null):
+                sensors=m.sensor_set.filter(pub_date__gte=request.query_params['pub_date__get'],pub_date__lte=request.query_params['pub_date__lte']).all()
+                sensors=sensors.last()
+            else :
+                sensors=m.sensor_set.last() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
             #sensor_jsons=SensorSerializer(sensors).data
-            return JsonResponse(SensorSerializer(m.sensor_set.last()).data,status=200,safe=False)
+            
+            return JsonResponse(SensorSerializer().data,status=200,safe=False)
         
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
