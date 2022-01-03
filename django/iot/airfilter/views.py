@@ -330,7 +330,7 @@ class SensorViewset(ReadOnlyModelViewSet):
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             sensors=m.sensor_set.last() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
-            sensor_jsons=SensorSerializer(sensors,many=True).data
+            sensor_jsons=SensorSerializer(sensors).data
             return JsonResponse(sensor_jsons,status=200,safe=False)
         
     def retrieve(self, request,pk=None):
@@ -359,7 +359,7 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
                 return HttpResponse("No machine registered in that user.", status=405)
             airkoreas=m.airkorea_set.last()
             
-            airkorea_jsons=AirKoreaSerializer(airkoreas,many=True).data
+            airkorea_jsons=AirKoreaSerializer(airkoreas).data
             return JsonResponse(airkorea_jsons,status=200,safe=False)
         
     def retrieve(self, request,pk=None):
