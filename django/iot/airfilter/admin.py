@@ -33,18 +33,32 @@ class UserAdmin(BaseUserAdmin):
     ordering=('username',)
     filter_horizontal=()
 
-class HoursAdmin(admin.ModelAdmin):
+class HoursSensorAdmin(admin.ModelAdmin):
     list_display=('pub_date','hours','machine')
     list_filter=['pub_date','machine']
     search_fields=['pub_date','hours','machine']
-class DaysAdmin(admin.ModelAdmin):
+class DaysSensorAdmin(admin.ModelAdmin):
     list_display=('pub_date','days','machine')
     list_filter=['pub_date','machine']
     search_fields=['pub_date','days','machine']
-class WeeksAdmin(admin.ModelAdmin):
+class WeeksSensorAdmin(admin.ModelAdmin):
     list_display=('pub_date','weeks','machine')
     list_filter=['pub_date','machine']
     search_fields=['pub_date','weeks','machine'] 
+    
+class HoursAirKoreaAdmin(admin.ModelAdmin):
+    list_display=('pub_date','hours','machine')
+    list_filter=['pub_date','machine']
+    search_fields=['pub_date','hours','machine']
+class DaysAirKoreaAdmin(admin.ModelAdmin):
+    list_display=('pub_date','days','machine')
+    list_filter=['pub_date','machine']
+    search_fields=['pub_date','days','machine']
+class WeeksAirKoreaAdmin(admin.ModelAdmin):
+    list_display=('pub_date','weeks','machine')
+    list_filter=['pub_date','machine']
+    search_fields=['pub_date','weeks','machine'] 
+    
 class MachineAdmin(admin.ModelAdmin):
     list_display=('id','car_number','pub_date','user')
     list_filter=['id','car_number','pub_date','user']
@@ -76,9 +90,12 @@ class AirKoreaAdmin(admin.ModelAdmin):
 #     list_display=('pub_date','thirty_days_sensor_avg','thirty_days_sensor_max','thirty_days_airkorea_avg','thirty_days_airkorea_max','machine')
 #     list_filter=['machine']
 #     search_fields=['machine']
-admin.site.register(Hours_sensor,HoursAdmin)
-admin.site.register(Days_sensor,DaysAdmin)
-admin.site.register(Weeks_sensor,WeeksAdmin)
+admin.site.register(Hours_sensor,HoursSensorAdmin)
+admin.site.register(Days_sensor,DaysSensorAdmin)
+admin.site.register(Weeks_sensor,WeeksSensorAdmin)
+admin.site.register(Hours_airkorea,HoursAirKoreaAdmin)
+admin.site.register(Days_airkorea,DaysAirKoreaAdmin)
+admin.site.register(Weeks_airkorea,WeeksAirKoreaAdmin)
 admin.site.register(GPS,GPSAdmin)    
 admin.site.register(QR,QRAdmin)
 admin.site.register(MyUser,UserAdmin)
