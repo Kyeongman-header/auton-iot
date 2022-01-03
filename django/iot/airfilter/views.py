@@ -342,7 +342,7 @@ class TimeRangeFilter_Days(django_filters.FilterSet):
         model = Days_sensor
         fields = ['machine','pub_date_gte','pub_date_lte']
                 
-class DaysViewSensorset(ReadOnlyModelViewSet):
+class DaysSensorViewset(ReadOnlyModelViewSet):
     queryset=Days_sensor.objects.all()
     serializer_class=DaysSensorSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
