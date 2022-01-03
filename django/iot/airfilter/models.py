@@ -90,6 +90,7 @@ class AirKorea(models.Model):
     pub_date=models.DateTimeField('airkorea date published',default=timezone.localtime)
     def __str__(self):
         return str(self.airkorea)
+    
 class Hours_sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     pub_date=models.DateTimeField('hours date published',default=timezone.localtime)
@@ -105,6 +106,28 @@ class Days_sensor(models.Model):
     def __str__(self):
         return str(self.days)
 class Weeks_sensor(models.Model):
+    machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
+    pub_date=models.DateTimeField('weeks date published',default=timezone.localtime)
+    weeks=models.FloatField(null=True, blank=True)
+    number=models.IntegerField(default=1)
+    def __str__(self):
+        return str(self.weeks)
+    
+class Hours_airkorea(models.Model):
+    machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
+    pub_date=models.DateTimeField('hours date published',default=timezone.localtime)
+    hours=models.FloatField(null=True, blank=True)
+    number=models.IntegerField(default=1)
+    def __str__(self):
+        return str(self.hours)
+class Days_airkorea(models.Model):
+    machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
+    pub_date=models.DateTimeField('days date published',default=timezone.localtime)
+    days=models.FloatField(null=True, blank=True)
+    number=models.IntegerField(default=1)
+    def __str__(self):
+        return str(self.days)
+class Weeks_airkorea(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     pub_date=models.DateTimeField('weeks date published',default=timezone.localtime)
     weeks=models.FloatField(null=True, blank=True)
