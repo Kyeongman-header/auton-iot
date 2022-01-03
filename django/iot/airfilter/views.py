@@ -44,15 +44,17 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                 if m.hours_sensor_set.last().pub_date.hour == datetime.datetime.now().hour:
                     
                     number=m.hours_sensor_set.last().number
-                    #m.hours_sensor_set.last().hours=((m.hours_sensor_set.last().hours*number) + data['sensor']['P.M 2.5']) / (number+1) 
+                    m.hours_sensor_set.last().hours=((m.hours_sensor_set.last().hours*number) + data['sensor']['P.M 2.5']) / (number+1) 
                     m.hours_sensor_set.last().number=number+1
-                    m.hours_sensor_set.last().hours=datetime.datetime.now().hour
+                
                     m.hours_sensor_set.last().save()
                 else :
-                    m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
+                    #m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
+                    m.hours_sensor_set.create(hours=m.hours_sensor_set.last().hours=datetime.datetime.now().hour, number=1)
                     
             else :
-                m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
+                #m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
+                m.hours_sensor_set.create(hours=m.hours_sensor_set.last().hours=datetime.datetime.now().hour, number=1)
                 
            
             if m.days_sensor_set.exists() :    
