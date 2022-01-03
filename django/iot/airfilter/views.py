@@ -243,7 +243,7 @@ class SensorViewset(ReadOnlyModelViewSet):
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
         
         #날짜를 pick하기 위한 사용자 정의 필터.
-class TimeRangeFilter(filters.FilterSet):
+class TimeRangeFilter(django_filters.FilterSet):
     pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
     pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
     class Meta:
