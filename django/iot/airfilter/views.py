@@ -39,16 +39,18 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             serializer_sensor.save()
             m=Machine.objects.get(id=serializer_sensor.data['machine'])
             m.airkorea_set.create(airkorea={'P.M 2.5' : data['sensor']['P.M 2.5_2'], 'CO' : 0,'SO2' : 0,'O3' : 0,'NO2' : 0,'khai' : 0})
+            
             if m.hours_sensor_set.exists() :
                 if m.hours_sensor_set.last().pub_date.hour == datetime.datetime.now().hour:
                     
                     number=m.hours_sensor_set.last().number
-                    m.hours_sensor_set.last().hours=((m.hours_sensor_set.last().hours*number) + data['sensor']['P.M 2.5']) / (number+1) 
+                    #m.hours_sensor_set.last().hours=((m.hours_sensor_set.last().hours*number) + data['sensor']['P.M 2.5']) / (number+1) 
                     m.hours_sensor_set.last().number=number+1
+                    m.hours_sensor_set.last().hours=datetime.datetime.now().hour
                     m.hours_sensor_set.last().save()
                 else :
                     m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
-                    m.hours_sensor_set.last().hours=datetime.datetime.now().hour
+                    
             else :
                 m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
                 
