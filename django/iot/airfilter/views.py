@@ -256,7 +256,7 @@ class HoursViewset(ReadOnlyModelViewSet):
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_class=TimeRangeFilter
+    filter_class=TimeRangeFilter_Hours
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
@@ -293,7 +293,7 @@ class DaysViewset(ReadOnlyModelViewSet):
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_class=TimeRangeFilter
+    filter_class=TimeRangeFilter_Days
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
@@ -329,7 +329,7 @@ class WeeksViewset(ReadOnlyModelViewSet):
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_class=TimeRangeFilter
+    filter_class=TimeRangeFilter_Weeks
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
