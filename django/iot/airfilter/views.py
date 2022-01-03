@@ -41,7 +41,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             m.airkorea_set.create(airkorea={'P.M 2.5' : data['sensor']['P.M 2.5_2'], 'CO' : 0,'SO2' : 0,'O3' : 0,'NO2' : 0,'khai' : 0})
             
             if m.hours_sensor_set.exists() :
-                if m.hours_sensor_set.last().pub_date.hour == datetime.datetime.now().hour:
+                if (datetime.datetime.now(timezone.utc)-m.hours_sensor_set.last().pub_date).seconds<3600 :
                     
                     number=m.hours_sensor_set.last().number
                     m.hours_sensor_set.last().hours=((m.hours_sensor_set.last().hours*number) + data['sensor']['P.M 2.5']) / (number+1) 
@@ -49,16 +49,16 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                 
                     m.hours_sensor_set.last().save()
                 else :
-                    #m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
+                    m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
                     #m.hours_sensor_set.create(hours=m.hours_sensor_set.last().pub_date.hour, number=1)
-                    m.hours_sensor_set.create(hours=m.hours_sensor_set.last().pub_date.hour, number=1, pub_date =m.hours_sensor_set.last().pub_date )
+                    #m.hours_sensor_set.create(hours=m.hours_sensor_set.last().pub_date.hour, number=1, pub_date =m.hours_sensor_set.last().pub_date )
             else :
                 m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
 
                 
            
             if m.days_sensor_set.exists() :    
-                if m.days_sensor_set.last().pub_date.day == datetime.datetime.now().day:
+                if (datetime.datetime.now(timezone.utc)-m.days_sensor_set.last().pub_date).days<1 :
                     number=m.days_sensor_set.last().number
                     m.days_sensor_set.last().days=((m.days_sensor_set.last().days*number) + data['sensor']['P.M 2.5']) / (number+1) 
                     m.days_sensor_set.last().number=number+1
