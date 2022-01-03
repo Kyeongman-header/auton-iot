@@ -42,12 +42,12 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             
             if m.hours_sensor_set.exists() :
                 if (datetime.datetime.now(timezone.utc)-m.hours_sensor_set.last().pub_date).seconds<3600 :
+                    h=m.hours_sensor_set.last()
                     
-                    number=m.hours_sensor_set.last().number
-                    m.hours_sensor_set.last().hours=((m.hours_sensor_set.last().hours*number) + data['sensor']['P.M 2.5']) / (number+1) 
-                    m.hours_sensor_set.last().number=number+1
+                    h.hours=((h.hours*number) + data['sensor']['P.M 2.5']) / (h.number+1) 
+                    h.number=h.number+1
                 
-                    m.hours_sensor_set.last().save()
+                    h.save()
                 else :
                     m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
                     #m.hours_sensor_set.create(hours=m.hours_sensor_set.last().pub_date.hour, number=1)
