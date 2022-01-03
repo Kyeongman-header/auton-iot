@@ -243,11 +243,11 @@ class SensorViewset(ReadOnlyModelViewSet):
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
         
         #날짜를 pick하기 위한 사용자 정의 필터.
-class TimeRangeFilter(django_filters.FilterSet):
+class TimeRangeFilter_Hours(django_filters.FilterSet):
     pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
     pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
     class Meta:
-        model = Event
+        model = Hours_sensor
         fields = ['machine','pub_date_gte','pub_date_lte']
         
 class HoursViewset(ReadOnlyModelViewSet):
@@ -280,7 +280,13 @@ class HoursViewset(ReadOnlyModelViewSet):
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)           
 
         
-        
+class TimeRangeFilter_Days(django_filters.FilterSet):
+    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
+    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
+    class Meta:
+        model = Days_sensor
+        fields = ['machine','pub_date_gte','pub_date_lte']
+                
 class DaysViewset(ReadOnlyModelViewSet):
     queryset=Days_sensor.objects.all()
     serializer_class=DaysSensorSerializer
@@ -309,6 +315,14 @@ class DaysViewset(ReadOnlyModelViewSet):
             return super().retrieve(request,pk)
         else :
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)        
+        
+class TimeRangeFilter_Weeks(django_filters.FilterSet):
+    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
+    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
+    class Meta:
+        model = Weeks_sensor
+        fields = ['machine','pub_date_gte','pub_date_lte']
+        
 class WeeksViewset(ReadOnlyModelViewSet):
     queryset=Weeks_sensor.objects.all()
     serializer_class=WeeksSensorSerializer
