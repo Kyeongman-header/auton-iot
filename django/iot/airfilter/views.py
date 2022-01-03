@@ -451,7 +451,7 @@ class TimeRangeFilter_Days_a(django_filters.FilterSet):
         model = Days_sensor
         fields = ['machine','pub_date_gte','pub_date_lte']
                 
-class DaysViewSensorset(ReadOnlyModelViewSet):
+class DaysAirKoreaViewset(ReadOnlyModelViewSet):
     queryset=Days_airkorea.objects.all()
     serializer_class=DaysAirKoreaSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
@@ -487,7 +487,7 @@ class TimeRangeFilter_Weeks_a(django_filters.FilterSet):
         model = Weeks_sensor
         fields = ['machine','pub_date_gte','pub_date_lte']
         
-class WeeksSensorViewset(ReadOnlyModelViewSet):
+class WeeksAirKoreaViewset(ReadOnlyModelViewSet):
     queryset=Weeks_airkorea.objects.all()
     serializer_class=WeeksAirKoreaSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
