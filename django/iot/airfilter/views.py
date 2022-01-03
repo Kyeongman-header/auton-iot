@@ -361,8 +361,10 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            #airkoreas=m.airkorea_set.last()
-            #airkorea_jsons=AirKoreaSerializer(airkoreas).data
+            if(request.query_params['pub_date__gte'] is not None and request.query_params['pub_date__lte'] is not None ):
+                airkoreas=m.airkorea_set.filter(pub_date__gte=request.query_params['pub_date__gte'],pub_date__lte=request.query_params['pub_date__lte']).last()
+            else :
+                airkoreass=m.airkorea_set.last() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
             return JsonResponse(AirKoreaSerializer(m.airkorea_set.last()).data,status=200,safe=False)
         
     def retrieve(self, request,pk=None):
@@ -375,13 +377,6 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
         # ///////////// hour, day, week data for sensor and airkorea
         
         
-        #날짜를 pick하기 위한 사용자 정의 필터.
-class TimeRangeFilter_Hours(django_filters.FilterSet):
-    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
-    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
-    class Meta:
-        model = Hours_sensor
-        fields = ['machine','pub_date_gte','pub_date_lte']
         
 class HoursSensorViewset(ReadOnlyModelViewSet):
     queryset=Hours_sensor.objects.all()
@@ -389,7 +384,7 @@ class HoursSensorViewset(ReadOnlyModelViewSet):
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_class=TimeRangeFilter_Hours
+    filter_fields={'machine'}
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
@@ -401,7 +396,11 @@ class HoursSensorViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            hours=m.hours_sensor_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=1))).all()
+            if(request.query_params['pub_date__gte'] is not None and request.query_params['pub_date__lte'] is not None ):
+                hours=m.hours_sensor_set.filter(pub_date__gte=request.query_params['pub_date__gte'],pub_date__lte=request.query_params['pub_date__lte']).all()
+            else :
+                hours=m.hours_sensor_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
+            
             
             hours_jsons=HoursSensorSerializer(hours,many=True).data
             return JsonResponse(hours_jsons,status=200,safe=False)
@@ -412,13 +411,7 @@ class HoursSensorViewset(ReadOnlyModelViewSet):
         else :
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)           
 
-        
-class TimeRangeFilter_Days(django_filters.FilterSet):
-    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
-    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
-    class Meta:
-        model = Days_sensor
-        fields = ['machine','pub_date_gte','pub_date_lte']
+
                 
 class DaysSensorViewset(ReadOnlyModelViewSet):
     queryset=Days_sensor.objects.all()
@@ -426,7 +419,7 @@ class DaysSensorViewset(ReadOnlyModelViewSet):
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_class=TimeRangeFilter_Days
+    filter_fields={'machine'}
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
@@ -438,7 +431,11 @@ class DaysSensorViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            days=m.days_sensor_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=7))).all()
+            if(request.query_params['pub_date__gte'] is not None and request.query_params['pub_date__lte'] is not None ):
+                days=m.days_sensor_set.filter(pub_date__gte=request.query_params['pub_date__gte'],pub_date__lte=request.query_params['pub_date__lte']).all()
+            else :
+                days=m.days_sensor_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
+            
             
             days_jsons=DaysSensorSerializer(days,many=True).data
             return JsonResponse(days_jsons,status=200,safe=False)
@@ -448,13 +445,7 @@ class DaysSensorViewset(ReadOnlyModelViewSet):
             return super().retrieve(request,pk)
         else :
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)        
-        
-class TimeRangeFilter_Weeks(django_filters.FilterSet):
-    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
-    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
-    class Meta:
-        model = Weeks_sensor
-        fields = ['machine','pub_date_gte','pub_date_lte']
+
         
 class WeeksSensorViewset(ReadOnlyModelViewSet):
     queryset=Weeks_sensor.objects.all()
@@ -462,7 +453,7 @@ class WeeksSensorViewset(ReadOnlyModelViewSet):
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_class=TimeRangeFilter_Weeks
+    filter_fields={'machine'}
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
@@ -474,7 +465,11 @@ class WeeksSensorViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            weeks=m.weeks_sensor_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(weeks=7))).all()
+            if(request.query_params['pub_date__gte'] is not None and request.query_params['pub_date__lte'] is not None ):
+                weeks=m.weeks_sensor_set.filter(pub_date__gte=request.query_params['pub_date__gte'],pub_date__lte=request.query_params['pub_date__lte']).all()
+            else :
+                weeks=m.weeks_sensor_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
+            
             
             weeks_jsons=WeeksSensorSerializer(weeks,many=True).data
             return JsonResponse(weeks_jsons,status=200,safe=False)
@@ -485,12 +480,7 @@ class WeeksSensorViewset(ReadOnlyModelViewSet):
         else :
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)       
         
-class TimeRangeFilter_Hours_a(django_filters.FilterSet):
-    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
-    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
-    class Meta:
-        model = Hours_airkorea
-        fields = ['machine','pub_date_gte','pub_date_lte']
+
         
 class HoursAirKoreaViewset(ReadOnlyModelViewSet):
     queryset=Hours_airkorea.objects.all()
@@ -498,7 +488,7 @@ class HoursAirKoreaViewset(ReadOnlyModelViewSet):
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_class=TimeRangeFilter_Hours_a
+    filter_fields={'machine'}
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
@@ -510,7 +500,11 @@ class HoursAirKoreaViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            hours=m.hours_airkorea_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=1))).all()
+            if(request.query_params['pub_date__gte'] is not None and request.query_params['pub_date__lte'] is not None ):
+                hours=m.hours_airkorea_set.filter(pub_date__gte=request.query_params['pub_date__gte'],pub_date__lte=request.query_params['pub_date__lte']).all()
+            else :
+                hours=m.hours_airkorea_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
+            
             
             hours_jsons=HoursAirKoreaSerializer(hours,many=True).data
             return JsonResponse(hours_jsons,status=200,safe=False)
@@ -522,20 +516,14 @@ class HoursAirKoreaViewset(ReadOnlyModelViewSet):
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)           
 
         
-class TimeRangeFilter_Days_a(django_filters.FilterSet):
-    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
-    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
-    class Meta:
-        model = Days_sensor
-        fields = ['machine','pub_date_gte','pub_date_lte']
-                
+
 class DaysAirKoreaViewset(ReadOnlyModelViewSet):
     queryset=Days_airkorea.objects.all()
     serializer_class=DaysAirKoreaSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_class=TimeRangeFilter_Days_a
+    filter_fields={'machine'}
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
@@ -547,7 +535,11 @@ class DaysAirKoreaViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            days=m.days_airkorea_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=7))).all()
+            if(request.query_params['pub_date__gte'] is not None and request.query_params['pub_date__lte'] is not None ):
+                days=m.days_airkorea_set.filter(pub_date__gte=request.query_params['pub_date__gte'],pub_date__lte=request.query_params['pub_date__lte']).all()
+            else :
+                days=m.days_airkorea_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
+            
             
             days_jsons=DaysAirKoreaSerializer(days,many=True).data
             return JsonResponse(days_jsons,status=200,safe=False)
@@ -558,12 +550,7 @@ class DaysAirKoreaViewset(ReadOnlyModelViewSet):
         else :
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)        
         
-class TimeRangeFilter_Weeks_a(django_filters.FilterSet):
-    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
-    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
-    class Meta:
-        model = Weeks_sensor
-        fields = ['machine','pub_date_gte','pub_date_lte']
+
         
 class WeeksAirKoreaViewset(ReadOnlyModelViewSet):
     queryset=Weeks_airkorea.objects.all()
@@ -571,7 +558,7 @@ class WeeksAirKoreaViewset(ReadOnlyModelViewSet):
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_class=TimeRangeFilter_Weeks_a
+    filter_fields={'machine'}
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
@@ -583,7 +570,11 @@ class WeeksAirKoreaViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            weeks=m.weeks_airkorea_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(weeks=7))).all()
+            if(request.query_params['pub_date__gte'] is not None and request.query_params['pub_date__lte'] is not None ):
+                weeks=m.weeks_airkorea_set.filter(pub_date__gte=request.query_params['pub_date__gte'],pub_date__lte=request.query_params['pub_date__lte']).all()
+            else :
+                weeks=m.weeks_airkorea_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
+            
             
             weeks_jsons=WeeksAirKoreaSerializer(weeks,many=True).data
             return JsonResponse(weeks_jsons,status=200,safe=False)
