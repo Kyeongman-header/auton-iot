@@ -10,8 +10,12 @@ router.register('gps',views.GPSViewset)
 router.register('qr',views.QRViewset)
 router.register('sensor',views.SensorViewset)
 router.register('airkorea',views.AirKoreaViewset)
-router.register('seven_days',views.SevenDaysViewset)
-router.register('thirty_days',views.ThirtyDaysViewset)
+router.register('hours',views.HoursViewset)
+router.register('days',views.DaysViewset)
+router.register('weeks',views.WeeksViewset)
+
+# router.register('seven_days',views.SevenDaysViewset)
+# router.register('thirty_days',views.ThirtyDaysViewset)
 
 
 
