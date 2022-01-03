@@ -41,7 +41,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             if m.hours_sensor_set.exists() :
                 if m.hours_sensor_set.last().pub_date.hour == datetime.datetime.now().hour:
                     number=m.hours_sensor_set.last().number
-                    m.hours_sensor_set.last().hours=(m.hours_sensor_set.last().hours*number) + data['sensor']['P.M 2.5']) / (number+1) 
+                    m.hours_sensor_set.last().hours=((m.hours_sensor_set.last().hours*number) + data['sensor']['P.M 2.5']) / (number+1) 
                     m.hours_sensor_set.last().number=number+1
                     m.hours_sensor_set.last().save()
                 else :
@@ -53,7 +53,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             if m.days_sensor_set.exists() :    
                 if m.days_sensor_set.last().pub_date.day == datetime.datetime.now().day:
                     number=m.days_sensor_set.last().number
-                    m.days_sensor_set.last().days=(m.days_sensor_set.last().days*number) + data['sensor']['P.M 2.5']) / (number+1) 
+                    m.days_sensor_set.last().days=((m.days_sensor_set.last().days*number) + data['sensor']['P.M 2.5']) / (number+1) 
                     m.days_sensor_set.last().number=number+1
                     m.days_sensor_set.last().save()
                 else :
@@ -64,7 +64,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             if m.weeks_sensor_set.exists() :    
                 if  (datetime.datetime.now() - m.weeks_sensor_set.last().pub_date).days/7 < 1:
                     number=m.weeks_sensor_set.last().number
-                    m.hours_sensor_set.last().weeks=(m.weeks_sensor_set.last().weeks*number) + data['sensor']['P.M 2.5']) / (number+1) 
+                    m.hours_sensor_set.last().weeks=((m.weeks_sensor_set.last().weeks*number) + data['sensor']['P.M 2.5']) / (number+1) 
                     m.hours_sensor_set.last().number=number+1
                     m.hours_sensor_set.last().save()
                 else :
