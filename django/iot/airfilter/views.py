@@ -14,7 +14,8 @@ from rest_framework.parsers import JSONParser
 from django.contrib.auth import authenticate, login
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from rest_framework.generics import CreateAPIView
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend, filters
+import django_filters
 from django.core import serializers
 import requests
 import hashlib
@@ -38,6 +39,23 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             m=Machine.objects.get(id=serializer_sensor.data['machine'])
             m.airkorea_set.create(airkorea={'P.M 2.5' : data['sensor']['P.M 2.5_2'], 'CO' : 0,'SO2' : 0,'O3' : 0,'NO2' : 0,'khai' : 0})
             
+            if m.hours_sensor_set.last().pub_date.hour == datetime.datetime.now().hour:
+                number=m.hours_sensor_set.last().number
+                m.hours_sensor_set.last().update(hours=((m.hours_sensor_set.last().hours*number) + data['sensor']['P.M 2.5']) / (number+1) , number=number+1)
+            else :
+                m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
+                
+            if m.days_sensor_set.last().pub_date.day == datetime.datetime.now().day:
+                number=m.days_sensor_set.last().number
+                m.days_sensor_set.last().update((days=((m.days_sensor_set.last().days*number) + data['sensor']['P.M 2.5']) / (number+1) , number=number+1)
+            else :
+                m.days_sensor_set.create(days=data['sensor']['P.M 2.5'], number=1)
+                
+            if  (datetime.datetime.now() - m.weeks_sensor_set.last().pub_date).days/7 < 1:
+                number=m.weeks_sensor_set.last().number
+                m.weeks_sensor_set.last().update((weeks=((m.weeks_sensor_set.last().weeks*number) + data['sensor']['P.M 2.5']) / (number+1) , number=number+1)
+            else :
+                m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'], number=1)                
         return JsonResponse(serializer_sensor.data,status=201)
 
 class MyUserViewset(ReadOnlyModelViewSet):
@@ -197,25 +215,25 @@ class SensorViewset(ReadOnlyModelViewSet):
     #authentication_classes=[TokenAuthentication] 
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
-    
-    
-        
+    def list(self,request):
+        user=request.user
+
             
 # test를 위해서 잠시 보안 관련된 것은 접어놓는다.
-#     def list(self, request):
-#         user=request.user
-#         user.last_login=timezone.localtime()
-#         user.save(update_fields=['last_login'])
-#         if request.user.is_staff :
-#             return super().list(request)
-#         else :
-#             try :
-#                 m=request.user.machine
-#             except :
-#                 return HttpResponse("No machine registered in that user.", status=405)
-#             sensors=m.sensor_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
-#             sensor_jsons=SensorSerializer(sensors,many=True).data
-#             return JsonResponse(sensor_jsons,status=200,safe=False)
+    def list(self, request):
+        user=request.user
+        user.last_login=timezone.localtime()
+        user.save(update_fields=['last_login'])
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            try :
+                m=request.user.machine
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            sensors=m.sensor_set.last() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
+            sensor_jsons=SensorSerializer(sensors,many=True).data
+            return JsonResponse(sensor_jsons,status=200,safe=False)
         
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
@@ -223,8 +241,103 @@ class SensorViewset(ReadOnlyModelViewSet):
         else :
             
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
+        
+        #날짜를 pick하기 위한 사용자 정의 필터.
+class TimeRangeFilter(filters.FilterSet):
+    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
+    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte;)
+    class Meta:
+        model = Event
+        fields = ['machine','pub_date_gte','pub_date_lte']
+        
+class HoursViewset(ReadOnlyModelViewSet):
+    queryset=Hours_sensor.objects.all()
+    serializer_class=HoursSensorSerializer
+    permission_classes=[AdminWriteOrUserReadOnly,]
+    authentication_classes=[TokenAuthentication]
+    filter_backends=(DjangoFilterBackend,)
+    filter_class=TimeRangeFilter
+    def list(self, request):
+        user=request.user
+        user.last_login=timezone.localtime()
+        user.save(update_fields=['last_login'])
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            try :
+                m=request.user.machine
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            hours=m.hours_sensor_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=1))).all()
+            
+            hours_jsons=HoursSensorSerializer(hours,many=True).data
+            return JsonResponse(hours_jsons,status=200,safe=False)
+        
+    def retrieve(self, request,pk=None):
+        if request.user.is_staff :
+            return super().retrieve(request,pk)
+        else :
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)           
 
-
+        
+        
+class DaysViewset(ReadOnlyModelViewSet):
+    queryset=Days_sensor.objects.all()
+    serializer_class=DaysSensorSerializer
+    permission_classes=[AdminWriteOrUserReadOnly,]
+    authentication_classes=[TokenAuthentication]
+    filter_backends=(DjangoFilterBackend,)
+    filter_class=TimeRangeFilter
+    def list(self, request):
+        user=request.user
+        user.last_login=timezone.localtime()
+        user.save(update_fields=['last_login'])
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            try :
+                m=request.user.machine
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            days=m.days_sensor_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=7))).all()
+            
+            days_jsons=DaysSensorSerializer(days,many=True).data
+            return JsonResponse(days_jsons,status=200,safe=False)
+        
+    def retrieve(self, request,pk=None):
+        if request.user.is_staff :
+            return super().retrieve(request,pk)
+        else :
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)        
+class WeeksViewset(ReadOnlyModelViewSet):
+    queryset=Weeks_sensor.objects.all()
+    serializer_class=WeeksSensorSerializer
+    permission_classes=[AdminWriteOrUserReadOnly,]
+    authentication_classes=[TokenAuthentication]
+    filter_backends=(DjangoFilterBackend,)
+    filter_class=TimeRangeFilter
+    def list(self, request):
+        user=request.user
+        user.last_login=timezone.localtime()
+        user.save(update_fields=['last_login'])
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            try :
+                m=request.user.machine
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            weeks=m.weeks_sensor_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(weeks=7))).all()
+            
+            weeks_jsons=WeeksSensorSerializer(weeks,many=True).data
+            return JsonResponse(weeks_jsons,status=200,safe=False)
+        
+    def retrieve(self, request,pk=None):
+        if request.user.is_staff :
+            return super().retrieve(request,pk)
+        else :
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)           
+        
 class AirKoreaViewset(ReadOnlyModelViewSet):
     queryset=AirKorea.objects.all()
     serializer_class=AirKoreaSerializer
@@ -243,7 +356,7 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            airkoreas=m.airkorea_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
+            airkoreas=m.airkorea_set.last()
             
             airkorea_jsons=AirKoreaSerializer(airkoreas,many=True).data
             return JsonResponse(airkorea_jsons,status=200,safe=False)
@@ -254,59 +367,59 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
         else :
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)   
         
-class SevenDaysViewset(ReadOnlyModelViewSet):
-    queryset=Seven_Days.objects.all()
-    serializer_class=SevenDaysSerializer
-    permission_classes=[AdminWriteOrUserReadOnly,]
-    authentication_classes=[TokenAuthentication]
-    filter_backends=(DjangoFilterBackend,)
-    filter_fields={'machine'}
-    def list(self, request):
-        user=request.user
-        user.last_login=timezone.localtime()
-        user.save(update_fields=['last_login'])
-        if request.user.is_staff :
-            return super().list(request)
-        else :
-            try :
-                m=request.user.machine
-            except :
-                return HttpResponse("No machine registered in that user.", status=405)
-            sevendayss=m.seven_days_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
-            sevendays_jsons=SevenDaysSerializer(sevendayss,many=True).data
-            return JsonResponse(sevendays_jsons,status=200,safe=False)
-    def retrieve(self, request,pk=None):
-        if request.user.is_staff :
-            return super().retrieve(request,pk)
-        else :
-            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)   
+# class SevenDaysViewset(ReadOnlyModelViewSet):
+#     queryset=Seven_Days.objects.all()
+#     serializer_class=SevenDaysSerializer
+#     permission_classes=[AdminWriteOrUserReadOnly,]
+#     authentication_classes=[TokenAuthentication]
+#     filter_backends=(DjangoFilterBackend,)
+#     filter_fields={'machine'}
+#     def list(self, request):
+#         user=request.user
+#         user.last_login=timezone.localtime()
+#         user.save(update_fields=['last_login'])
+#         if request.user.is_staff :
+#             return super().list(request)
+#         else :
+#             try :
+#                 m=request.user.machine
+#             except :
+#                 return HttpResponse("No machine registered in that user.", status=405)
+#             sevendayss=m.seven_days_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
+#             sevendays_jsons=SevenDaysSerializer(sevendayss,many=True).data
+#             return JsonResponse(sevendays_jsons,status=200,safe=False)
+#     def retrieve(self, request,pk=None):
+#         if request.user.is_staff :
+#             return super().retrieve(request,pk)
+#         else :
+#             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)   
         
-class ThirtyDaysViewset(ReadOnlyModelViewSet):
-    queryset=Thirty_Days.objects.all()
-    serializer_class=ThirtyDaysSerializer
-    permission_classes=[AdminWriteOrUserReadOnly,]
-    authentication_classes=[TokenAuthentication]
-    filter_backends=(DjangoFilterBackend,)
-    filter_fields={'machine'}
-    def list(self, request):
-        user=request.user
-        user.last_login=timezone.localtime()
-        user.save(update_fields=['last_login'])
-        if request.user.is_staff :
-            return super().list(request)
-        else :
-            try :
-                m=request.user.machine
-            except :
-                return HttpResponse("No machine registered in that user.", status=405)
-            thirtydayss=m.thirty_days_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
-            thirtydays_jsons=ThirtyDaysSerializer(thirtydayss,many=True).data
-            return JsonResponse(thirtydays_jsons,status=200,safe=False)
-    def retrieve(self, request,pk=None):
-        if request.user.is_staff :
-            return super().retrieve(request,pk)
-        else :
-            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)   
+# class ThirtyDaysViewset(ReadOnlyModelViewSet):
+#     queryset=Thirty_Days.objects.all()
+#     serializer_class=ThirtyDaysSerializer
+#     permission_classes=[AdminWriteOrUserReadOnly,]
+#     authentication_classes=[TokenAuthentication]
+#     filter_backends=(DjangoFilterBackend,)
+#     filter_fields={'machine'}
+#     def list(self, request):
+#         user=request.user
+#         user.last_login=timezone.localtime()
+#         user.save(update_fields=['last_login'])
+#         if request.user.is_staff :
+#             return super().list(request)
+#         else :
+#             try :
+#                 m=request.user.machine
+#             except :
+#                 return HttpResponse("No machine registered in that user.", status=405)
+#             thirtydayss=m.thirty_days_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=31))).all() # 한달치 데이터.
+#             thirtydays_jsons=ThirtyDaysSerializer(thirtydayss,many=True).data
+#             return JsonResponse(thirtydays_jsons,status=200,safe=False)
+#     def retrieve(self, request,pk=None):
+#         if request.user.is_staff :
+#             return super().retrieve(request,pk)
+#         else :
+#             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)   
 
 # @csrf_exempt
 # def machines_list(request):
