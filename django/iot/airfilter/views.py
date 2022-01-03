@@ -44,6 +44,8 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     m.hours_sensor_set.last().update(hours=((m.hours_sensor_set.last().hours*number) + data['sensor']['P.M 2.5']) / (number+1) , number=number+1)
                 else :
                     m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
+            else :
+                m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
                 
            
             if m.days_sensor_set.exists() :    
@@ -52,14 +54,18 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     m.days_sensor_set.last().update(days=((m.days_sensor_set.last().days*number) + data['sensor']['P.M 2.5']) / (number+1) , number=number+1)
                 else :
                     m.days_sensor_set.create(days=data['sensor']['P.M 2.5'], number=1)
-            
+            else :
+                m.days_sensor_set.create(days=data['sensor']['P.M 2.5'], number=1)
                 
             if m.weeks_sensor_set.exists() :    
                 if  (datetime.datetime.now() - m.weeks_sensor_set.last().pub_date).days/7 < 1:
                     number=m.weeks_sensor_set.last().number
                     m.weeks_sensor_set.last().update(weeks=((m.weeks_sensor_set.last().weeks*number) + data['sensor']['P.M 2.5']) / (number+1) , number=number+1)
                 else :
-                    m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'], number=1)                
+                    m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'], number=1)
+            else :
+                 m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'], number=1)
+                    
         return JsonResponse(serializer_sensor.data,status=201)
 
 class MyUserViewset(ReadOnlyModelViewSet):
