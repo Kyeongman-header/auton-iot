@@ -32,7 +32,7 @@ STATIC_ROOT=os.path.join(BASE_DIR,'static')
 SECRET_KEY = 'django-insecure-58p$i(9qx0*ehb7b$l5!z!gp_5q)^znfftc$6kd6$@(%b_iiw^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['15.164.39.105','127.0.0.1','ec2-54-180-141-52.ap-northeast-2.compute.amazonaws.com','auton-iot.com']
 ALLOWED_HOSTS.append(['10.0.5.%d' for x in range(256)])
