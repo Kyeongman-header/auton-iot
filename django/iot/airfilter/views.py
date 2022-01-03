@@ -316,10 +316,7 @@ class SensorViewset(ReadOnlyModelViewSet):
     #authentication_classes=[TokenAuthentication] 
     filter_backends=(DjangoFilterBackend,)
     filter_fields={'machine'}
-    def list(self,request):
-        user=request.user
 
-            
 # test를 위해서 잠시 보안 관련된 것은 접어놓는다.
     def list(self, request):
         user=request.user
