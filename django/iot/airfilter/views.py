@@ -51,10 +51,10 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                 else :
                     #m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
                     #m.hours_sensor_set.create(hours=m.hours_sensor_set.last().pub_date.hour, number=1)
-                    m.hours_sensor_set.create(hours=datetime.datetime.now().hour, number=1)
+                    m.hours_sensor_set.create(hours=m.hours_sensor_set.last().pub_date.hour, number=1, pub_date =m.hours_sensor_set.last().pub_date )
             else :
-                #m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
-                m.hours_sensor_set.create(hours=m.hours_sensor_set.last().hours, number=1)
+                m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
+
                 
            
             if m.days_sensor_set.exists() :    
@@ -77,7 +77,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                 else :
                     m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'], number=1)
             else :
-                 m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'], number=1)
+                m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'], number=1)
                     
         return JsonResponse(serializer_sensor.data,status=201)
 
