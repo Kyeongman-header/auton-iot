@@ -264,6 +264,38 @@ class SensorViewset(ReadOnlyModelViewSet):
         else :
             
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
+class AirKoreaViewset(ReadOnlyModelViewSet):
+    queryset=AirKorea.objects.all()
+    serializer_class=AirKoreaSerializer
+    permission_classes=[AdminWriteOrUserReadOnly,]
+    authentication_classes=[TokenAuthentication]
+    filter_backends=(DjangoFilterBackend,)
+    filter_fields={'machine'}
+    def list(self, request):
+        user=request.user
+        user.last_login=timezone.localtime()
+        user.save(update_fields=['last_login'])
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            try :
+                m=request.user.machine
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            airkoreas=m.airkorea_set.last()
+            
+            airkorea_jsons=AirKoreaSerializer(airkoreas,many=True).data
+            return JsonResponse(airkorea_jsons,status=200,safe=False)
+        
+    def retrieve(self, request,pk=None):
+        if request.user.is_staff :
+            return super().retrieve(request,pk)
+        else :
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)   
+        
+        
+        # ///////////// hour, day, week data for sensor and airkorea
+        
         
         #날짜를 pick하기 위한 사용자 정의 필터.
 class TimeRangeFilter_Hours(django_filters.FilterSet):
@@ -273,7 +305,7 @@ class TimeRangeFilter_Hours(django_filters.FilterSet):
         model = Hours_sensor
         fields = ['machine','pub_date_gte','pub_date_lte']
         
-class HoursViewset(ReadOnlyModelViewSet):
+class HoursSensorViewset(ReadOnlyModelViewSet):
     queryset=Hours_sensor.objects.all()
     serializer_class=HoursSensorSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
@@ -310,7 +342,7 @@ class TimeRangeFilter_Days(django_filters.FilterSet):
         model = Days_sensor
         fields = ['machine','pub_date_gte','pub_date_lte']
                 
-class DaysViewset(ReadOnlyModelViewSet):
+class DaysViewSensorset(ReadOnlyModelViewSet):
     queryset=Days_sensor.objects.all()
     serializer_class=DaysSensorSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
@@ -346,7 +378,7 @@ class TimeRangeFilter_Weeks(django_filters.FilterSet):
         model = Weeks_sensor
         fields = ['machine','pub_date_gte','pub_date_lte']
         
-class WeeksViewset(ReadOnlyModelViewSet):
+class WeeksSensorViewset(ReadOnlyModelViewSet):
     queryset=Weeks_sensor.objects.all()
     serializer_class=WeeksSensorSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
@@ -373,15 +405,22 @@ class WeeksViewset(ReadOnlyModelViewSet):
         if request.user.is_staff :
             return super().retrieve(request,pk)
         else :
-            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)           
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)       
         
-class AirKoreaViewset(ReadOnlyModelViewSet):
-    queryset=AirKorea.objects.all()
-    serializer_class=AirKoreaSerializer
+class TimeRangeFilter_Hours_a(django_filters.FilterSet):
+    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
+    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
+    class Meta:
+        model = Hours_airkorea
+        fields = ['machine','pub_date_gte','pub_date_lte']
+        
+class HoursAirKoreaViewset(ReadOnlyModelViewSet):
+    queryset=Hours_airkorea.objects.all()
+    serializer_class=HoursAirKoreaSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_fields={'machine'}
+    filter_class=TimeRangeFilter_Hours_a
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
@@ -393,16 +432,90 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            airkoreas=m.airkorea_set.last()
+            hours=m.hours_airkorea_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=1))).all()
             
-            airkorea_jsons=AirKoreaSerializer(airkoreas,many=True).data
-            return JsonResponse(airkorea_jsons,status=200,safe=False)
+            hours_jsons=HoursAirKoreaSerializer(hours,many=True).data
+            return JsonResponse(hours_jsons,status=200,safe=False)
         
     def retrieve(self, request,pk=None):
         if request.user.is_staff :
             return super().retrieve(request,pk)
         else :
-            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)   
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)           
+
+        
+class TimeRangeFilter_Days_a(django_filters.FilterSet):
+    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
+    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
+    class Meta:
+        model = Days_sensor
+        fields = ['machine','pub_date_gte','pub_date_lte']
+                
+class DaysViewSensorset(ReadOnlyModelViewSet):
+    queryset=Days_airkorea.objects.all()
+    serializer_class=DaysAirKoreaSerializer
+    permission_classes=[AdminWriteOrUserReadOnly,]
+    authentication_classes=[TokenAuthentication]
+    filter_backends=(DjangoFilterBackend,)
+    filter_class=TimeRangeFilter_Days_a
+    def list(self, request):
+        user=request.user
+        user.last_login=timezone.localtime()
+        user.save(update_fields=['last_login'])
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            try :
+                m=request.user.machine
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            days=m.days_airkorea_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(days=7))).all()
+            
+            days_jsons=DaysAirKoreaSerializer(days,many=True).data
+            return JsonResponse(days_jsons,status=200,safe=False)
+        
+    def retrieve(self, request,pk=None):
+        if request.user.is_staff :
+            return super().retrieve(request,pk)
+        else :
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)        
+        
+class TimeRangeFilter_Weeks_a(django_filters.FilterSet):
+    pub_date_gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
+    pub_date_lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
+    class Meta:
+        model = Weeks_sensor
+        fields = ['machine','pub_date_gte','pub_date_lte']
+        
+class WeeksSensorViewset(ReadOnlyModelViewSet):
+    queryset=Weeks_airkorea.objects.all()
+    serializer_class=WeeksAirKoreaSerializer
+    permission_classes=[AdminWriteOrUserReadOnly,]
+    authentication_classes=[TokenAuthentication]
+    filter_backends=(DjangoFilterBackend,)
+    filter_class=TimeRangeFilter_Weeks_a
+    def list(self, request):
+        user=request.user
+        user.last_login=timezone.localtime()
+        user.save(update_fields=['last_login'])
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            try :
+                m=request.user.machine
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            weeks=m.weeks_airkorea_set.filter(pub_date__gte=(datetime.datetime.now()-datetime.timedelta(weeks=7))).all()
+            
+            weeks_jsons=WeeksAirKoreaSerializer(weeks,many=True).data
+            return JsonResponse(weeks_jsons,status=200,safe=False)
+        
+    def retrieve(self, request,pk=None):
+        if request.user.is_staff :
+            return super().retrieve(request,pk)
+        else :
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)  
+
         
 # class SevenDaysViewset(ReadOnlyModelViewSet):
 #     queryset=Seven_Days.objects.all()
