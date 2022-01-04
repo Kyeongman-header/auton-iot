@@ -329,9 +329,7 @@ class SensorViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            if(request.query_params['pub_date__gte'] is not None and request.query_params['pub_date__lte'] is not None ):
-                sensors=m.sensor_set.filter(pub_date__gte=request.query_params['pub_date__gte'],pub_date__lte=request.query_params['pub_date__lte']).last()
-            else :
+            
                 sensors=m.sensor_set.last() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
             #sensor_jsons=SensorSerializer(sensors).data
             
@@ -361,9 +359,7 @@ class AirKoreaViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            if(request.query_params['pub_date__gte'] is not None and request.query_params['pub_date__lte'] is not None ):
-                airkoreas=m.airkorea_set.filter(pub_date__gte=request.query_params['pub_date__gte'],pub_date__lte=request.query_params['pub_date__lte']).last()
-            else :
+            
                 airkoreass=m.airkorea_set.last() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
             return JsonResponse(AirKoreaSerializer(m.airkorea_set.last()).data,status=200,safe=False)
         
