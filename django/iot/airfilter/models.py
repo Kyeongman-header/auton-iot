@@ -94,24 +94,24 @@ class AirKorea(models.Model):
 class Hours_sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     pub_date=models.DateTimeField('hours date published',default=timezone.localtime)
-    hours=models.FloatField(null=True, blank=True)
-    hours_worst=models.FloatField(null=True,blank=True)
+    hours=models.FloatField(defalut=0,null=True, blank=True)
+    hours_worst=models.FloatField(defalut=0,null=True,blank=True)
     number=models.IntegerField(default=1)
     def __str__(self):
         return str(self.hours)
 class Days_sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     pub_date=models.DateTimeField('days date published',default=timezone.localtime)
-    days=models.FloatField(null=True, blank=True)
-    days_worst=models.FloatField(null=True,blank=True)
+    days=models.FloatField(defalut=0,null=True, blank=True)
+    days_worst=models.FloatField(defalut=0,null=True,blank=True)
     number=models.IntegerField(default=1)
     def __str__(self):
         return str(self.days)
 class Weeks_sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     pub_date=models.DateTimeField('weeks date published',default=timezone.localtime)
-    weeks=models.FloatField(null=True, blank=True)
-    weeks_worst=models.FloatField(null=True, blank=True)
+    weeks=models.FloatField(defalut=0,null=True, blank=True)
+    weeks_worst=models.FloatField(defalut=0,null=True, blank=True)
     number=models.IntegerField(default=1)
     def __str__(self):
         return str(self.weeks)
@@ -119,24 +119,24 @@ class Weeks_sensor(models.Model):
 class Hours_airkorea(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     pub_date=models.DateTimeField('hours date published',default=timezone.localtime)
-    hours=models.FloatField(null=True, blank=True)
-    hours_worst=models.FloatField(null=True, blank=True)
+    hours=models.FloatField(defalut=0,null=True, blank=True)
+    hours_worst=models.FloatField(defalut=0,null=True, blank=True)
     number=models.IntegerField(default=1)
     def __str__(self):
         return str(self.hours)
 class Days_airkorea(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     pub_date=models.DateTimeField('days date published',default=timezone.localtime)
-    days=models.FloatField(null=True, blank=True)
-    days_worst=models.FloatField(null=True, blank=True)
+    days=models.FloatField(defalut=0,null=True, blank=True)
+    days_worst=models.FloatField(defalut=0,null=True, blank=True)
     number=models.IntegerField(default=1)
     def __str__(self):
         return str(self.days)
 class Weeks_airkorea(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     pub_date=models.DateTimeField('weeks date published',default=timezone.localtime)
-    weeks=models.FloatField(null=True, blank=True)
-    weeks_worst=models.FloatField(null=True, blank=True)
+    weeks=models.FloatField(defalut=0,null=True, blank=True)
+    weeks_worst=models.FloatField(defalut=0,null=True, blank=True)
     number=models.IntegerField(default=1)
     def __str__(self):
         return str(self.weeks)
