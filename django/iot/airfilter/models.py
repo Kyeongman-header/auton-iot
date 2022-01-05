@@ -102,7 +102,7 @@ class Hours_sensor(models.Model):
 class Days_sensor(models.Model):
     machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
     pub_date=models.DateTimeField('days date published',default=timezone.localtime)
-    days=models.FloatField(defalut=0e)
+    days=models.FloatField(defalut=0)
     days_worst=models.FloatField(defalut=0)
     number=models.IntegerField(default=1)
     def __str__(self):
