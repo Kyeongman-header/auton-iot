@@ -46,12 +46,14 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     
                     h.hours=((h.hours*h.number) + air_data.airkorea['khai']) / (h.number+1) 
                     h.number=h.number+1
+                    if h.hours_worst < air_data.airkorea['khai']:
+                        h.hours_worst=air_data.airkorea['khai']
                     h.save()
                 else :
-                    m.hours_airkorea_set.create(hours=air_data.airkorea['khai'], number=1)
+                    m.hours_airkorea_set.create(hours=air_data.airkorea['khai'],hours_worst=air_data.airkorea['khai'], number=1)
                     
             else :
-                m.hours_airkorea_set.create(hours=air_data.airkorea['khai'], number=1)
+                m.hours_airkorea_set.create(hours=air_data.airkorea['khai'],hours_worst=air_data.airkorea['khai'], number=1)
 
                 
            
@@ -60,22 +62,26 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     d=m.days_airkorea_set.last()
                     d.days=((d.days*d.number) + air_data.airkorea['khai']) / (d.number+1) 
                     d.number=d.number+1
+                    if d.days_worst < air_data.airkorea['khai']:
+                        d.days_worst=air_data.airkorea['khai']
                     d.save()
                 else :
-                    m.days_airkorea_set.create(days=air_data.airkorea['khai'], number=1)
+                    m.days_airkorea_set.create(days=air_data.airkorea['khai'],days_worst=air_data.airkorea['khai'], number=1)
             else :
-                m.days_airkorea_set.create(days=air_data.airkorea['khai'], number=1)
+                m.days_airkorea_set.create(days=air_data.airkorea['khai'],days_worst=air_data.airkorea['khai'], number=1)
                 
             if m.weeks_airkorea_set.exists() :    
                 if  (datetime.datetime.now(timezone.utc) - m.weeks_airkorea_set.last().pub_date).days/7 < 1:
                     w=m.weeks_airkorea_set.last()
                     w.weeks=((w.weeks*w.number) + air_data.airkorea['khai']) / (w.number+1) 
                     w.number=w.number+1
+                    if w.weeks_worst < air_data.airkorea['khai']:
+                        w.weeks_worst=air_data.airkorea['khai']
                     w.save()
                 else :
-                    m.weeks_airkorea_set.create(weeks=air_data.airkorea['khai'], number=1)
+                    m.weeks_airkorea_set.create(weeks=air_data.airkorea['khai'],weeks_worst=air_data.airkorea['khai'], number=1)
             else :
-                m.weeks_airkorea_set.create(weeks=air_data.airkorea['khai'], number=1)
+                m.weeks_airkorea_set.create(weeks=air_data.airkorea['khai'],weeks_worst=air_data.airkorea['khai'],  number=1)
                 
                 
                 
@@ -87,36 +93,41 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     
                     h.hours=((h.hours*h.number) + data['sensor']['P.M 2.5']) / (h.number+1) 
                     h.number=h.number+1
-                
+                    if h.hours_worst < data['sensor']['P.M 2.5']:
+                        h.hours_worst=data['sensor']['P.M 2.5']:
                     h.save()
                 else :
-                    m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
+                    m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'],hours_worst=data['sensor']['P.M 2.5'], number=1)
                     #m.hours_sensor_set.create(hours=m.hours_sensor_set.last().pub_date.hour, number=1)
                     #m.hours_sensor_set.create(hours=m.hours_sensor_set.last().pub_date.hour, number=1, pub_date =m.hours_sensor_set.last().pub_date )
             else :
-                m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'], number=1)
+                m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'],hours_worst=data['sensor']['P.M 2.5'], number=1)
 
             if m.days_sensor_set.exists() :    
                 if (datetime.datetime.now(timezone.utc)-m.days_sensor_set.last().pub_date).days<1 :
                     d=m.days_sensor_set.last()
                     d.days=((d.days*d.number) + data['sensor']['P.M 2.5']) / (d.number+1) 
                     d.number=d.number+1
+                    if d.days_worst < data['sensor']['P.M 2.5']:
+                        d.days_worst=data['sensor']['P.M 2.5']:
                     d.save()
                 else :
-                    m.days_sensor_set.create(days=data['sensor']['P.M 2.5'], number=1)
+                    m.days_sensor_set.create(days=data['sensor']['P.M 2.5'],days_worst=data['sensor']['P.M 2.5'], number=1)
             else :
-                m.days_sensor_set.create(days=data['sensor']['P.M 2.5'], number=1)
+                m.days_sensor_set.create(days=data['sensor']['P.M 2.5'], days_worst=data['sensor']['P.M 2.5'], number=1)
                 
             if m.weeks_sensor_set.exists() :    
                 if  (datetime.datetime.now(timezone.utc) - m.weeks_sensor_set.last().pub_date).days/7 < 1:
                     w=m.weeks_sensor_set.last()
                     w.weeks=((w.weeks*w.number) + data['sensor']['P.M 2.5']) / (w.number+1) 
                     w.number=w.number+1
+                    if w.weeks_worst < data['sensor']['P.M 2.5']:
+                        w.weeks_worst=data['sensor']['P.M 2.5']:
                     w.save()
                 else :
-                    m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'], number=1)
+                    m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'],weeks_worst=data['sensor']['P.M 2.5'], number=1)
             else :
-                m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'], number=1)
+                m.weeks_sensor_set.create(weeks=data['sensor']['P.M 2.5'],weeks_worst=data['sensor']['P.M 2.5'], number=1)
                     
         return JsonResponse(serializer_sensor.data,status=201)
 
@@ -396,6 +407,7 @@ class HoursSensorViewset(ReadOnlyModelViewSet):
                 hours=m.hours_sensor_set.filter(pub_date__gte=request.query_params['pub_date__gte'],pub_date__lte=request.query_params['pub_date__lte']).all()
             else :
                 hours=m.hours_sensor_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
+                # 왜인지 모르게 이 if - else 문은 정상적으로 작동을 안함. pub_date__gte가 존재하지 않으면 아예 코드 자체가 오류가 남.
             
             
             hours_jsons=HoursSensorSerializer(hours,many=True).data
