@@ -46,7 +46,9 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     
                     h.hours=((h.hours*h.number) + air_data.airkorea['khai']) / (h.number+1) 
                     h.number=h.number+1
-                    if h.hours_worst < air_data.airkorea['khai'] or h.hours_worst is None:
+                    if h.hours_worst is None:
+                        h.hours_worst=air_data.airkorea['khai']
+                    else if h.hours_worst < air_data.airkorea['khai'] :
                         h.hours_worst=air_data.airkorea['khai']
                     h.save()
                 else :
@@ -62,7 +64,9 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     d=m.days_airkorea_set.last()
                     d.days=((d.days*d.number) + air_data.airkorea['khai']) / (d.number+1) 
                     d.number=d.number+1
-                    if d.days_worst < air_data.airkorea['khai'] or d.days_worst is None:
+                    if d.days_worst is None:
+                        d.days_worst=air_data.airkorea['khai']
+                    else if  d.days_worst < air_data.airkorea['khai']  :
                         d.days_worst=air_data.airkorea['khai']
                     d.save()
                 else :
@@ -75,7 +79,9 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     w=m.weeks_airkorea_set.last()
                     w.weeks=((w.weeks*w.number) + air_data.airkorea['khai']) / (w.number+1) 
                     w.number=w.number+1
-                    if w.weeks_worst < air_data.airkorea['khai'] or w.weeks_worst is None:
+                    if w.weeks_worst is None :
+                        w.weeks_worst=air_data.airkorea['khai']
+                    else if w.weeks_worst < air_data.airkorea['khai'] :
                         w.weeks_worst=air_data.airkorea['khai']
                     w.save()
                 else :
