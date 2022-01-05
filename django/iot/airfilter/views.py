@@ -48,7 +48,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     h.number=h.number+1
                     if h.hours_worst is None:
                         h.hours_worst=air_data.airkorea['khai']
-                    else if h.hours_worst < air_data.airkorea['khai'] :
+                    elif h.hours_worst < air_data.airkorea['khai'] :
                         h.hours_worst=air_data.airkorea['khai']
                     h.save()
                 else :
@@ -66,7 +66,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     d.number=d.number+1
                     if d.days_worst is None:
                         d.days_worst=air_data.airkorea['khai']
-                    else if  d.days_worst < air_data.airkorea['khai']  :
+                    elif  d.days_worst < air_data.airkorea['khai']  :
                         d.days_worst=air_data.airkorea['khai']
                     d.save()
                 else :
@@ -81,7 +81,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     w.number=w.number+1
                     if w.weeks_worst is None :
                         w.weeks_worst=air_data.airkorea['khai']
-                    else if w.weeks_worst < air_data.airkorea['khai'] :
+                    elif w.weeks_worst < air_data.airkorea['khai'] :
                         w.weeks_worst=air_data.airkorea['khai']
                     w.save()
                 else :
@@ -101,7 +101,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     h.number=h.number+1
                     if h.hours_worst is None :
                         h.hours_worst=data['sensor']['P.M 2.5']
-                    else if h.hours_worst < data['sensor']['P.M 2.5'] :
+                    elif h.hours_worst < data['sensor']['P.M 2.5'] :
                         h.hours_worst=data['sensor']['P.M 2.5']
                             
                     h.save()
@@ -119,7 +119,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     d.number=d.number+1
                     if d.days_worst < data['sensor']['P.M 2.5'] or d.days_worst is None:
                         d.days_worst=data['sensor']['P.M 2.5']
-                    else if d.days_worst < data['sensor']['P.M 2.5'] :
+                    elif d.days_worst < data['sensor']['P.M 2.5'] :
                         d.days_worst=data['sensor']['P.M 2.5']
                     d.save()
                 else :
@@ -134,7 +134,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     w.number=w.number+1
                     if w.weeks_worst < data['sensor']['P.M 2.5'] or w.weeks_worst is None:
                         w.weeks_worst=data['sensor']['P.M 2.5']
-                    else if w.weeks_worst < data['sensor']['P.M 2.5'] :
+                    elif w.weeks_worst < data['sensor']['P.M 2.5'] :
                         w.weeks_worst=data['sensor']['P.M 2.5']
                     w.save()
                 else :
@@ -275,7 +275,7 @@ class GPSViewset(ModelViewSet):
                     h.number=h.number+1
                     if h.hours_worst is None:
                         h.hours_worst=air_data.airkorea['khai']
-                    else if h.hours_worst < air_data.airkorea['khai'] :
+                    elif h.hours_worst < air_data.airkorea['khai'] :
                         h.hours_worst=air_data.airkorea['khai']
                     h.save()
                 else :
@@ -293,7 +293,7 @@ class GPSViewset(ModelViewSet):
                     d.number=d.number+1
                     if d.days_worst is None:
                         d.days_worst=air_data.airkorea['khai']
-                    else if  d.days_worst < air_data.airkorea['khai']  :
+                    elif  d.days_worst < air_data.airkorea['khai']  :
                         d.days_worst=air_data.airkorea['khai']
                     d.save()
                 else :
@@ -308,7 +308,7 @@ class GPSViewset(ModelViewSet):
                     w.number=w.number+1
                     if w.weeks_worst is None :
                         w.weeks_worst=air_data.airkorea['khai']
-                    else if w.weeks_worst < air_data.airkorea['khai'] :
+                    elif w.weeks_worst < air_data.airkorea['khai'] :
                         w.weeks_worst=air_data.airkorea['khai']
                     w.save()
                 else :
