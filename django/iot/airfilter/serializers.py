@@ -4,32 +4,32 @@ from rest_framework import serializers
 class HoursSensorSerializer(serializers.ModelSerializer):
     class Meta:
         model=Hours_sensor
-        fields=['machine','hours','pub_date']
+        fields=['machine','hours','hours_worst','pub_date']
 
 class DaysSensorSerializer(serializers.ModelSerializer):
     class Meta:
         model=Days_sensor
-        fields=['machine','days','pub_date']
+        fields=['machine','days','days_worst','pub_date']
 
 class WeeksSensorSerializer(serializers.ModelSerializer):
     class Meta:
         model=Weeks_sensor
-        fields=['machine','weeks','pub_date']
+        fields=['machine','weeks','weeks_worst','pub_date']
         
 class HoursAirKoreaSerializer(serializers.ModelSerializer):
     class Meta:
         model=Hours_airkorea
-        fields=['machine','hours','pub_date']
+        fields=['machine','hours','hours_worst','pub_date']
 
 class DaysAirKoreaSerializer(serializers.ModelSerializer):
     class Meta:
         model=Days_airkorea
-        fields=['machine','days','pub_date']
+        fields=['machine','days','days_worst','pub_date']
 
 class WeeksAirKoreaSerializer(serializers.ModelSerializer):
     class Meta:
         model=Weeks_airkorea
-        fields=['machine','weeks','pub_date'] 
+        fields=['machine','weeks','weeks_worst','pub_date'] 
         
 class GPSSerializer(serializers.ModelSerializer):
     class Meta:
