@@ -34,30 +34,30 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal=()
 
 class HoursSensorAdmin(admin.ModelAdmin):
-    list_display=('pub_date','hours','machine')
+    list_display=('pub_date','hours','hours_worst','machine')
     list_filter=['pub_date','machine']
-    search_fields=['pub_date','hours','machine']
+    search_fields=['pub_date','hours','machine','hours_worst',]
 class DaysSensorAdmin(admin.ModelAdmin):
-    list_display=('pub_date','days','machine')
+    list_display=('pub_date','days','days_worst','machine')
     list_filter=['pub_date','machine']
-    search_fields=['pub_date','days','machine']
+    search_fields=['pub_date','days','days_worst','machine']
 class WeeksSensorAdmin(admin.ModelAdmin):
-    list_display=('pub_date','weeks','machine')
+    list_display=('pub_date','weeks','weeks_worst','machine')
     list_filter=['pub_date','machine']
-    search_fields=['pub_date','weeks','machine'] 
+    search_fields=['pub_date','weeks','weeks_worst','machine'] 
     
 class HoursAirKoreaAdmin(admin.ModelAdmin):
-    list_display=('pub_date','hours','machine')
+    list_display=('pub_date','hours','hours_worst','machine')
     list_filter=['pub_date','machine']
-    search_fields=['pub_date','hours','machine']
+    search_fields=['pub_date','hours','hours_worst','machine']
 class DaysAirKoreaAdmin(admin.ModelAdmin):
-    list_display=('pub_date','days','machine')
+    list_display=('pub_date','days','days_worst','machine')
     list_filter=['pub_date','machine']
-    search_fields=['pub_date','days','machine']
+    search_fields=['pub_date','days','days_worst','machine']
 class WeeksAirKoreaAdmin(admin.ModelAdmin):
-    list_display=('pub_date','weeks','machine')
+    list_display=('pub_date','weeks','weeks_worst','machine')
     list_filter=['pub_date','machine']
-    search_fields=['pub_date','weeks','machine'] 
+    search_fields=['pub_date','weeks','weeks_worst','machine'] 
     
 class MachineAdmin(admin.ModelAdmin):
     list_display=('id','car_number','pub_date','user')
