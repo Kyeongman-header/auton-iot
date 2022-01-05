@@ -99,8 +99,11 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     
                     h.hours=((h.hours*h.number) + data['sensor']['P.M 2.5']) / (h.number+1) 
                     h.number=h.number+1
-                    if h.hours_worst < data['sensor']['P.M 2.5'] or h.hours_worst is None:
+                    if h.hours_worst is None :
                         h.hours_worst=data['sensor']['P.M 2.5']
+                    else if h.hours_worst < data['sensor']['P.M 2.5'] :
+                        h.hours_worst=data['sensor']['P.M 2.5']
+                            
                     h.save()
                 else :
                     m.hours_sensor_set.create(hours=data['sensor']['P.M 2.5'],hours_worst=data['sensor']['P.M 2.5'], number=1)
@@ -116,6 +119,8 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     d.number=d.number+1
                     if d.days_worst < data['sensor']['P.M 2.5'] or d.days_worst is None:
                         d.days_worst=data['sensor']['P.M 2.5']
+                    else if d.days_worst < data['sensor']['P.M 2.5'] :
+                        d.days_worst=data['sensor']['P.M 2.5']
                     d.save()
                 else :
                     m.days_sensor_set.create(days=data['sensor']['P.M 2.5'],days_worst=data['sensor']['P.M 2.5'], number=1)
@@ -128,6 +133,8 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
                     w.weeks=((w.weeks*w.number) + data['sensor']['P.M 2.5']) / (w.number+1) 
                     w.number=w.number+1
                     if w.weeks_worst < data['sensor']['P.M 2.5'] or w.weeks_worst is None:
+                        w.weeks_worst=data['sensor']['P.M 2.5']
+                    else if w.weeks_worst < data['sensor']['P.M 2.5'] :
                         w.weeks_worst=data['sensor']['P.M 2.5']
                     w.save()
                 else :
@@ -266,7 +273,9 @@ class GPSViewset(ModelViewSet):
                     
                     h.hours=((h.hours*h.number) + air_data.airkorea['khai']) / (h.number+1) 
                     h.number=h.number+1
-                    if h.hours_worst < air_data.airkorea['khai'] or h.hours_worst is None:
+                    if h.hours_worst is None:
+                        h.hours_worst=air_data.airkorea['khai']
+                    else if h.hours_worst < air_data.airkorea['khai'] :
                         h.hours_worst=air_data.airkorea['khai']
                     h.save()
                 else :
@@ -282,7 +291,9 @@ class GPSViewset(ModelViewSet):
                     d=m.days_airkorea_set.last()
                     d.days=((d.days*d.number) + air_data.airkorea['khai']) / (d.number+1) 
                     d.number=d.number+1
-                    if d.days_worst < air_data.airkorea['khai'] or d.days_worst is None:
+                    if d.days_worst is None:
+                        d.days_worst=air_data.airkorea['khai']
+                    else if  d.days_worst < air_data.airkorea['khai']  :
                         d.days_worst=air_data.airkorea['khai']
                     d.save()
                 else :
@@ -295,7 +306,9 @@ class GPSViewset(ModelViewSet):
                     w=m.weeks_airkorea_set.last()
                     w.weeks=((w.weeks*w.number) + air_data.airkorea['khai']) / (w.number+1) 
                     w.number=w.number+1
-                    if w.weeks_worst < air_data.airkorea['khai'] or w.weeks_worst is None:
+                    if w.weeks_worst is None :
+                        w.weeks_worst=air_data.airkorea['khai']
+                    else if w.weeks_worst < air_data.airkorea['khai'] :
                         w.weeks_worst=air_data.airkorea['khai']
                     w.save()
                 else :
