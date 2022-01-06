@@ -436,7 +436,7 @@ class HoursSensorViewset(ReadOnlyModelViewSet):
                 hours=m.hours_sensor_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
                 # 왜인지 모르게 이 if - else 문은 정상적으로 작동을 안함. pub_date__gte가 존재하지 않으면 아예 코드 자체가 오류가 남.
             
-            
+            hours=hours.order_by('pub_date')
             hours_jsons=HoursSensorSerializer(hours,many=True).data
             return JsonResponse(hours_jsons,status=200,safe=False)
         
@@ -471,7 +471,7 @@ class DaysSensorViewset(ReadOnlyModelViewSet):
             else :
                 days=m.days_sensor_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
             
-            
+            days=days.order_by('pub_date')
             days_jsons=DaysSensorSerializer(days,many=True).data
             return JsonResponse(days_jsons,status=200,safe=False)
         
@@ -505,7 +505,7 @@ class WeeksSensorViewset(ReadOnlyModelViewSet):
             else :
                 weeks=m.weeks_sensor_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
             
-            
+            weeks=weeks.order_by('pub_date')
             weeks_jsons=WeeksSensorSerializer(weeks,many=True).data
             return JsonResponse(weeks_jsons,status=200,safe=False)
         
@@ -540,7 +540,7 @@ class HoursAirKoreaViewset(ReadOnlyModelViewSet):
             else :
                 hours=m.hours_airkorea_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
             
-            
+            hours=hours.order_by('pub_date')
             hours_jsons=HoursAirKoreaSerializer(hours,many=True).data
             return JsonResponse(hours_jsons,status=200,safe=False)
         
@@ -575,7 +575,7 @@ class DaysAirKoreaViewset(ReadOnlyModelViewSet):
             else :
                 days=m.days_airkorea_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
             
-            
+            days=days.order_by('pub_date')
             days_jsons=DaysAirKoreaSerializer(days,many=True).data
             return JsonResponse(days_jsons,status=200,safe=False)
         
@@ -610,7 +610,7 @@ class WeeksAirKoreaViewset(ReadOnlyModelViewSet):
             else :
                 weeks=m.weeks_airkorea_set.all() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
             
-            
+            weeks=weeks.order_by('pub_date')
             weeks_jsons=WeeksAirKoreaSerializer(weeks,many=True).data
             return JsonResponse(weeks_jsons,status=200,safe=False)
         
