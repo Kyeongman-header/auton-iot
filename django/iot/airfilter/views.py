@@ -26,9 +26,7 @@ Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 # Create your views here.
 
 def main(request):
-    template = loader.get_template('airfilter/main.html')
-    
-    return HttpResponse(template.render(request))
+    render(request,'airfilter/main.html')
 
 class OnlyMQTTSensorAdd(CreateAPIView,):
     queryset = Sensor.objects.all()
