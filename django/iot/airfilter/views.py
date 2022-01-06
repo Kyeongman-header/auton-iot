@@ -25,6 +25,10 @@ from django.utils import timezone
 Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 # Create your views here.
 
+def main(request):
+    template = loader.get_template('airfilter/오토앤's+개인정보처리방침.html')
+    
+    return HttpResponse(template.render(request))
 
 class OnlyMQTTSensorAdd(CreateAPIView,):
     queryset = Sensor.objects.all()
