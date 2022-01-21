@@ -35,68 +35,19 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
     authentication_classes=[TokenAuthentication]
     def create(self, request): # 임시로, sensor가 전송될때 P.M 2.5 _ 2 값을 AIR KOREA 값으로 전송한다.(가장 정확한 외부 공기질) (그러나 상용화 단계에선 어차피 못씀. 걍 지워버리면 되는 코드임.)
         data = JSONParser().parse(request)
-        serializer_sensor=SensorSerializer(data=data)
+        serializer_sensor=SensorSerializer(data=data["machine","sensor"]) # gps 항목은 따로 저장할 것이다. 저기 아래에서...
 
         if serializer_sensor.is_valid() :
             serializer_sensor.save()
-            m=Machine.objects.get(id=serializer_sensor.data['machine'])
+            _id=serializer_sensor.data['machine']
+            m=Machine.objects.get(id=_id)
+            _gps=data['gps'] # 저기 아래가 바로 여기임. mqtt로 전달된 데이터 중 gps 항목은 따로 떼어내서 gps 필드에 저장할 것이다.
             
-            # 여기부터 지우면 된다.
-            m.airkorea_set.create(airkorea={'P.M 2.5' : data['sensor']['P.M 2.5_2'], 'CO' : 0,'SO2' : 0,'O3' : 0,'NO2' : 0,'khai' : 0})
-            air_data=m.airkorea_set.last()
-            if m.hours_airkorea_set.exists() :
-                if (datetime.datetime.now(timezone.utc)-m.hours_airkorea_set.last().pub_date).seconds<3600 :
-                    h=m.hours_airkorea_set.last()
-                    
-                    h.hours=((h.hours*h.number) + air_data.airkorea['P.M 2.5']) / (h.number+1) 
-                    h.number=h.number+1
-                    if h.hours_worst is None:
-                        h.hours_worst=air_data.airkorea['P.M 2.5']
-                    elif h.hours_worst < air_data.airkorea['P.M 2.5'] :
-                        h.hours_worst=air_data.airkorea['P.M 2.5']
-                    h.save()
-                else :
-                    m.hours_airkorea_set.create(hours=air_data.airkorea['P.M 2.5'],hours_worst=air_data.airkorea['P.M 2.5'], number=1)
-                    
-            else :
-                m.hours_airkorea_set.create(hours=air_data.airkorea['P.M 2.5'],hours_worst=air_data.airkorea['P.M 2.5'], number=1)
-
-                
-           
-            if m.days_airkorea_set.exists() :    
-                if (datetime.datetime.now(timezone.utc)-m.days_airkorea_set.last().pub_date).days<1 :
-                    d=m.days_airkorea_set.last()
-                    d.days=((d.days*d.number) + air_data.airkorea['P.M 2.5']) / (d.number+1) 
-                    d.number=d.number+1
-                    if d.days_worst is None:
-                        d.days_worst=air_data.airkorea['P.M 2.5']
-                    elif  d.days_worst < air_data.airkorea['P.M 2.5'] :
-                        d.days_worst=air_data.airkorea['P.M 2.5']
-                    d.save()
-                else :
-                    m.days_airkorea_set.create(days=air_data.airkorea['P.M 2.5'],days_worst=air_data.airkorea['P.M 2.5'], number=1)
-            else :
-                m.days_airkorea_set.create(days=air_data.airkorea['P.M 2.5'],days_worst=air_data.airkorea['P.M 2.5'], number=1)
-                
-            if m.weeks_airkorea_set.exists() :    
-                if  (datetime.datetime.now(timezone.utc) - m.weeks_airkorea_set.last().pub_date).days/7 < 1:
-                    w=m.weeks_airkorea_set.last()
-                    w.weeks=((w.weeks*w.number) + air_data.airkorea['P.M 2.5']) / (w.number+1) 
-                    w.number=w.number+1
-                    if w.weeks_worst is None :
-                        w.weeks_worst=air_data.airkorea['P.M 2.5']
-                    elif w.weeks_worst < air_data.airkorea['P.M 2.5'] :
-                        w.weeks_worst=air_data.airkorea['P.M 2.5']
-                    w.save()
-                else :
-                    m.weeks_airkorea_set.create(weeks=air_data.airkorea['P.M 2.5'],weeks_worst=air_data.airkorea['P.M 2.5'], number=1)
-            else :
-                m.weeks_airkorea_set.create(weeks=air_data.airkorea['P.M 2.5'],weeks_worst=air_data.airkorea['P.M 2.5'],  number=1)
-                
-                
-                
-                # ////////////////// air korea 업데이트. gps 가 정상적으로 들어올 때에 삭제.
+            update_airkorea(_gps,_id) # 이 gps값을 바탕으로 airkorea를 업데이트 해준다.
             
+            m.gps_set.create(gps=_gps) # 그리고 gps 값도 역시나 GPS 필드에 따로 저장해준다.
+            
+            # 새롭게 들어온 sensor_data는 sensor orm에 새롭게 저장되었다. 이 가장 최근의 last 요소를 가지고 sensor에 대한 통계량들을 업데이트 해준다.(hours_sensor, days_sensor, weeks_sensor)
             if m.hours_sensor_set.exists() :
                 if (datetime.datetime.now(timezone.utc)-m.hours_sensor_set.last().pub_date).seconds<3600 :
                     h=m.hours_sensor_set.last()
@@ -235,6 +186,73 @@ def find_point(gps_string):
     point.append(gps_string.split(' ')[2])
     return point
 
+def update_airkorea(d,_id):
+    point=find_point(d)
+    shell='curl "http://crawler.auton-iot.com/api/gps/?X='+point[0]+'&Y='+point[1]+'"'
+    stream=os.popen(shell)
+    #res=requests.post(Crawler_URL,data={'gps' : d},timeout=timeout)
+# 여기서 DMZ의 AirKorea API Crawler에게 데이터를 요청하고 (request library), 돌려받은 데이터를 이용하여 AirKorea를 add 한다.
+
+    #if res.status_code !=201 :
+    #    return HttpResponse(status = res.status_code)
+    output=stream.read()
+    ar=json.loads(output)
+    #m=Machine.objects.get(id=serializer.data['machine'])
+    m=Machine.objects.get(id=_id)
+    m.airkorea_set.create(airkorea=ar["airkorea"])
+    # airkorea가 업데이트 될때마다, airkorea에 대한 통계량들도 업데이트 된다.
+    
+    air_data=m.airkorea_set.last()
+    if m.hours_airkorea_set.exists() :
+        if (datetime.datetime.now(timezone.utc)-m.hours_airkorea_set.last().pub_date).seconds<3600 :
+            h=m.hours_airkorea_set.last()
+
+            h.hours=((h.hours*h.number) + air_data.airkorea['khai']) / (h.number+1) 
+            h.number=h.number+1
+            if h.hours_worst is None:
+                h.hours_worst=air_data.airkorea['khai']
+            elif h.hours_worst < air_data.airkorea['khai'] :
+                h.hours_worst=air_data.airkorea['khai']
+            h.save()
+        else :
+            m.hours_airkorea_set.create(hours=air_data.airkorea['khai'],hours_worst=air_data.airkorea['khai'], number=1)
+
+    else :
+        m.hours_airkorea_set.create(hours=air_data.airkorea['khai'],hours_worst=air_data.airkorea['khai'], number=1)
+
+
+
+    if m.days_airkorea_set.exists() :    
+        if (datetime.datetime.now(timezone.utc)-m.days_airkorea_set.last().pub_date).days<1 :
+            d=m.days_airkorea_set.last()
+            d.days=((d.days*d.number) + air_data.airkorea['khai']) / (d.number+1) 
+            d.number=d.number+1
+            if d.days_worst is None:
+                d.days_worst=air_data.airkorea['khai']
+            elif  d.days_worst < air_data.airkorea['khai']  :
+                d.days_worst=air_data.airkorea['khai']
+            d.save()
+        else :
+            m.days_airkorea_set.create(days=air_data.airkorea['khai'],days_worst=air_data.airkorea['khai'], number=1)
+    else :
+        m.days_airkorea_set.create(days=air_data.airkorea['khai'],days_worst=air_data.airkorea['khai'], number=1)
+
+    if m.weeks_airkorea_set.exists() :    
+        if  (datetime.datetime.now(timezone.utc) - m.weeks_airkorea_set.last().pub_date).days/7 < 1:
+            w=m.weeks_airkorea_set.last()
+            w.weeks=((w.weeks*w.number) + air_data.airkorea['khai']) / (w.number+1) 
+            w.number=w.number+1
+            if w.weeks_worst is None :
+                w.weeks_worst=air_data.airkorea['khai']
+            elif w.weeks_worst < air_data.airkorea['khai'] :
+                w.weeks_worst=air_data.airkorea['khai']
+            w.save()
+        else :
+            m.weeks_airkorea_set.create(weeks=air_data.airkorea['khai'],weeks_worst=air_data.airkorea['khai'], number=1)
+    else :
+        m.weeks_airkorea_set.create(weeks=air_data.airkorea['khai'],weeks_worst=air_data.airkorea['khai'],  number=1)
+
+
 class GPSViewset(ModelViewSet):
     queryset=GPS.objects.all()
     serializer_class=GPSSerializer
@@ -256,69 +274,8 @@ class GPSViewset(ModelViewSet):
         if serializer.is_valid():
             serializer.save()
             d=serializer.data['gps']
+            update_gps(d)
             
-            point=find_point(d)
-            shell='curl "http://crawler.auton-iot.com/api/gps/?X='+point[0]+'&Y='+point[1]+'"'
-            stream=os.popen(shell)
-            #res=requests.post(Crawler_URL,data={'gps' : d},timeout=timeout)
-        # 여기서 DMZ의 AirKorea API Crawler에게 데이터를 요청하고 (request library), 돌려받은 데이터를 이용하여 AirKorea를 add 한다.
-
-            #if res.status_code !=201 :
-            #    return HttpResponse(status = res.status_code)
-            output=stream.read()
-            ar=json.loads(output)
-            m=Machine.objects.get(id=serializer.data['machine'])
-            m.airkorea_set.create(airkorea=ar["airkorea"])
-            # airkorea가 업데이트 될때마다, airkorea에 대한 통계량들도 업데이트 된다.
-            air_data=m.airkorea_set.last()
-            if m.hours_airkorea_set.exists() :
-                if (datetime.datetime.now(timezone.utc)-m.hours_airkorea_set.last().pub_date).seconds<3600 :
-                    h=m.hours_airkorea_set.last()
-                    
-                    h.hours=((h.hours*h.number) + air_data.airkorea['khai']) / (h.number+1) 
-                    h.number=h.number+1
-                    if h.hours_worst is None:
-                        h.hours_worst=air_data.airkorea['khai']
-                    elif h.hours_worst < air_data.airkorea['khai'] :
-                        h.hours_worst=air_data.airkorea['khai']
-                    h.save()
-                else :
-                    m.hours_airkorea_set.create(hours=air_data.airkorea['khai'],hours_worst=air_data.airkorea['khai'], number=1)
-                    
-            else :
-                m.hours_airkorea_set.create(hours=air_data.airkorea['khai'],hours_worst=air_data.airkorea['khai'], number=1)
-
-                
-           
-            if m.days_airkorea_set.exists() :    
-                if (datetime.datetime.now(timezone.utc)-m.days_airkorea_set.last().pub_date).days<1 :
-                    d=m.days_airkorea_set.last()
-                    d.days=((d.days*d.number) + air_data.airkorea['khai']) / (d.number+1) 
-                    d.number=d.number+1
-                    if d.days_worst is None:
-                        d.days_worst=air_data.airkorea['khai']
-                    elif  d.days_worst < air_data.airkorea['khai']  :
-                        d.days_worst=air_data.airkorea['khai']
-                    d.save()
-                else :
-                    m.days_airkorea_set.create(days=air_data.airkorea['khai'],days_worst=air_data.airkorea['khai'], number=1)
-            else :
-                m.days_airkorea_set.create(days=air_data.airkorea['khai'],days_worst=air_data.airkorea['khai'], number=1)
-                
-            if m.weeks_airkorea_set.exists() :    
-                if  (datetime.datetime.now(timezone.utc) - m.weeks_airkorea_set.last().pub_date).days/7 < 1:
-                    w=m.weeks_airkorea_set.last()
-                    w.weeks=((w.weeks*w.number) + air_data.airkorea['khai']) / (w.number+1) 
-                    w.number=w.number+1
-                    if w.weeks_worst is None :
-                        w.weeks_worst=air_data.airkorea['khai']
-                    elif w.weeks_worst < air_data.airkorea['khai'] :
-                        w.weeks_worst=air_data.airkorea['khai']
-                    w.save()
-                else :
-                    m.weeks_airkorea_set.create(weeks=air_data.airkorea['khai'],weeks_worst=air_data.airkorea['khai'], number=1)
-            else :
-                m.weeks_airkorea_set.create(weeks=air_data.airkorea['khai'],weeks_worst=air_data.airkorea['khai'],  number=1)
                 
         
         return JsonResponse(serializer.data,status=201)
