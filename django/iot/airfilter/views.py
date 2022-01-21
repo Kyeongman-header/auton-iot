@@ -35,7 +35,7 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
     authentication_classes=[TokenAuthentication]
     def create(self, request): # 임시로, sensor가 전송될때 P.M 2.5 _ 2 값을 AIR KOREA 값으로 전송한다.(가장 정확한 외부 공기질) (그러나 상용화 단계에선 어차피 못씀. 걍 지워버리면 되는 코드임.)
         data = JSONParser().parse(request)
-        serializer_sensor=SensorSerializer(data=data["machine","sensor"]) # gps 항목은 따로 저장할 것이다. 저기 아래에서...
+        serializer_sensor=SensorSerializer(data={"machine" : data["machine"], "sensor" : data["sensor"]}) # gps 항목은 따로 저장할 것이다. 저기 아래에서...
 
         if serializer_sensor.is_valid() :
             serializer_sensor.save()
