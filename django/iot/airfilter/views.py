@@ -41,7 +41,8 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             serializer_sensor.save()
             _id=serializer_sensor.data['machine']
             m=Machine.objects.get(id=_id)
-            _gps=data['gps'] # 저기 아래가 바로 여기임. mqtt로 전달된 데이터 중 gps 항목은 따로 떼어내서 gps 필드에 저장할 것이다.
+            gps_format="SRID=4326;POINT (" + data['gps_x'] + " " + data['gps_y']+")"
+            _gps=gps_format # 저기 아래가 바로 여기임. mqtt로 전달된 데이터 중 gps 항목은 따로 떼어내서 gps 필드에 저장할 것이다.
             
             update_airkorea(_gps,_id) # 이 gps값을 바탕으로 airkorea를 업데이트 해준다.
             
