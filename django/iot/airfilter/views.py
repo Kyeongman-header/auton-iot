@@ -305,9 +305,9 @@ class GPSViewset(ModelViewSet):
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
             
-            gpss=m.gps_set.all() # gps 데이터는 상용 단계에서 저장되지 않는다. 
-            gps_jsons=GPSSerializer(gpss,many=True).data
-            return JsonResponse(gps_jsons,status=200,safe=False)
+            gps_last=m.gps_set.last() # gps 데이터는 상용 단계에서 저장되지 않는다. 
+            gps_json=GPSSerializer(gps_last).data
+            return JsonResponse(gps_json,status=200,safe=False)
         
     def destroy(self, request, pk=None):
         if request.user.is_staff :
