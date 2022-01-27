@@ -260,6 +260,14 @@ def update_airkorea(d,_id):
     else :
         m.weeks_airkorea_set.create(weeks=air_data.airkorea['khai'],weeks_worst=air_data.airkorea['khai'],  number=1)
 
+class GPSFilter(django_filters.FilterSet):
+    pub_date__gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
+    pub_date__lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
+    machine=django_filters.ModelChoiceFilter(field_name="machine",queryset=Machine.objects.all())
+    class Meta:
+        model = GPS
+        fields = ['pub_date__gte', 'pub_date__lte', 'machine']
+    def __init__(self, *args, **kwargs): super(GPSFilter, self).__init__(*args, **kwargs)
 
 class GPSViewset(ModelViewSet):
     queryset=GPS.objects.all()
@@ -267,7 +275,7 @@ class GPSViewset(ModelViewSet):
     permission_classes=[IsAuthenticated,]#OnlyRightUserUpdateAvailable]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_fields={'machine'}
+    filter_class=GPSFilter
     
     def create(self, request):
         data = JSONParser().parse(request)
@@ -357,13 +365,23 @@ class SensorViewset(ReadOnlyModelViewSet):
         else :
             
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
+
+class AirKoreaFilter(django_filters.FilterSet):
+    pub_date__gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
+    pub_date__lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
+    machine=django_filters.ModelChoiceFilter(field_name="machine",queryset=Machine.objects.all())
+    class Meta:
+        model = AirKorea
+        fields = ['pub_date__gte', 'pub_date__lte', 'machine']
+    def __init__(self, *args, **kwargs): super(AirKoreaFilter, self).__init__(*args, **kwargs)
+                
 class AirKoreaViewset(ReadOnlyModelViewSet):
     queryset=AirKorea.objects.all()
     serializer_class=AirKoreaSerializer
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication]
     filter_backends=(DjangoFilterBackend,)
-    filter_fields={'machine'}
+    filter_class=AirKoreaFilter
     def list(self, request):
         user=request.user
         user.last_login=timezone.localtime()
