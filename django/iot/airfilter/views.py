@@ -22,6 +22,7 @@ import hashlib
 import datetime
 from django.utils import timezone
 
+
 Crawler_URL='http://crawler.auton-iot.com/api/gps/'
 # Create your views here.
 
@@ -306,6 +307,16 @@ class GPSViewset(ModelViewSet):
             
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
 
+        
+class DateFilter(filters.FilterSet):
+    pub_date__gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
+    pub_date__lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
+    machine=django_filters.ModelChoiceFilter(field_name="machine",queryset=Machine.objects.all())
+    class Meta:
+        model = Event
+        fields = ['pub_date__gte', 'pub_date__lte', 'machine']
+    def __init__(self, *args, **kwargs): super(DateFilter, self).__init__(*args, **kwargs)
+        
 class SensorViewset(ReadOnlyModelViewSet):
     queryset=Sensor.objects.all()
     serializer_class=SensorSerializer
@@ -313,7 +324,8 @@ class SensorViewset(ReadOnlyModelViewSet):
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication] 
     filter_backends=(DjangoFilterBackend,)
-    filter_fields={'machine'}
+    #filter_fields={'machine'}
+    filter_class=DateFilter
 
 # test를 위해서 잠시 보안 관련된 것은 접어놓는다.
     def list(self, request):
