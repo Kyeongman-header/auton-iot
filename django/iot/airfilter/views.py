@@ -321,7 +321,7 @@ class SensorFilter(django_filters.FilterSet):
     class Meta:
         model = Sensor
         fields = ['pub_date__gte', 'pub_date__lte', 'machine']
-    def __init__(self, *args, **kwargs): super(DateFilter, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs): super(SenosorFilter, self).__init__(*args, **kwargs)
         
 class SensorViewset(ReadOnlyModelViewSet):
     queryset=Sensor.objects.all()
