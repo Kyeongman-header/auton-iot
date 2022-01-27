@@ -14,13 +14,19 @@ from rest_framework.parsers import JSONParser
 from django.contrib.auth import authenticate, login
 from rest_framework.viewsets import ReadOnlyModelViewSet, ModelViewSet
 from rest_framework.generics import CreateAPIView
-from django_filters.rest_framework import DjangoFilterBackend, filters
-import django_filters
+
 from django.core import serializers
 import requests
 import hashlib
 import datetime
 from django.utils import timezone
+
+
+#필터링 위함.
+from django_filters.rest_framework import DjangoFilterBackend, filters
+import django_filters
+from django_filters import ( FilterSet, DateTimeFilter, ModelChoiceFilter )
+
 
 
 Crawler_URL='http://crawler.auton-iot.com/api/gps/'
@@ -308,7 +314,7 @@ class GPSViewset(ModelViewSet):
             return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
 
         
-class DateFilter(filters.FilterSet):
+class DateFilter(django_filters.FilterSet):
     pub_date__gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
     pub_date__lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
     machine=django_filters.ModelChoiceFilter(field_name="machine",queryset=Machine.objects.all())
