@@ -32,7 +32,12 @@ class UserAdmin(BaseUserAdmin):
     search_fields=('username',)
     ordering=('username',)
     filter_horizontal=()
-
+    
+class FilterAdmin(admin.ModelAdmin):
+    list_display=('pub_date','filter_state_word','filter_state_grade','lastfilterchangedate','machine')
+    list_filter=['pub_date','machine','lastfilterchangedate','filter_state_word']
+    search_fields=['pub_date','machine']
+    
 class HoursSensorAdmin(admin.ModelAdmin):
     list_display=('pub_date','hours','hours_worst','machine')
     list_filter=['pub_date','machine']
@@ -90,6 +95,7 @@ class AirKoreaAdmin(admin.ModelAdmin):
 #     list_display=('pub_date','thirty_days_sensor_avg','thirty_days_sensor_max','thirty_days_airkorea_avg','thirty_days_airkorea_max','machine')
 #     list_filter=['machine']
 #     search_fields=['machine']
+admin.site.register(Filter,FilterAdmin)
 admin.site.register(Hours_sensor,HoursSensorAdmin)
 admin.site.register(Days_sensor,DaysSensorAdmin)
 admin.site.register(Weeks_sensor,WeeksSensorAdmin)
