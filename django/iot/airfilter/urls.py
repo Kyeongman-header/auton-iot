@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from django.conf.urls import url,include
 
 router=DefaultRouter()
+router.register('filter',views.FilterViewset)
 router.register('user',views.MyUserViewset)
 router.register('machine',views.MachineViewset)
 router.register('gps',views.GPSViewset)
