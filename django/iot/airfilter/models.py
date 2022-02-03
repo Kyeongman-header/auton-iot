@@ -96,7 +96,7 @@ class Filter(models.Model):
     filter_state_word=models.CharField(max_length=20,blank=True,null=True)
     filter_state_grade=models.FloatField(default=0,blank=True,null=True)
     lastfilterchangedate=models.DateTimeField('last filter change date',default=timezone.localtime)
-    pub_date=models.DateTimeField('airkorea date published',default=timezone.localtime)
+    pub_date=models.DateTimeField('filter date published',default=timezone.localtime)
     def __str__(self):
         return str(self.filter_state_word)
 
