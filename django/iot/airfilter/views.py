@@ -260,6 +260,52 @@ def update_airkorea(d,_id):
     else :
         m.weeks_airkorea_set.create(weeks=air_data.airkorea['khai'],weeks_worst=air_data.airkorea['khai'],  number=1)
 
+       
+class FilterFilter(django_filters.FilterSet):
+    pub_date__gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
+    pub_date__lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
+    machine=django_filters.ModelChoiceFilter(field_name="machine",queryset=Machine.objects.all())
+    class Meta:
+        model = Filter
+        fields = ['pub_date__gte', 'pub_date__lte', 'machine']
+    def __init__(self, *args, **kwargs): super(FilterFilter, self).__init__(*args, **kwargs)
+        
+class FilterViewset(ReadOnlyModelViewSet):
+    queryset=Filter.objects.all().order_by('pub_date')
+    serializer_class=FilterSerializer
+    #permission_classes=[AllowAny] # for 통신 테스트 with 고등기술연구원.
+    permission_classes=[AdminWriteOrUserReadOnly,]
+    authentication_classes=[TokenAuthentication] 
+    filter_backends=(DjangoFilterBackend,)
+    #filter_fields={'machine'}
+    filter_class=FilterFilter
+
+    def list(self, request):
+        user=request.user
+        user.last_login=timezone.localtime()
+        user.save(update_fields=['last_login'])
+        if request.user.is_staff :
+            return super().list(request)
+        else :
+            try :
+                m=request.user.machine
+            except :
+                return HttpResponse("No machine registered in that user.", status=405)
+            
+            filters=m.filter_set.last() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
+            #sensor_jsons=SensorSerializer(sensors).data
+            
+            return JsonResponse(FilterSerializer(filters).data,status=200,safe=False)
+        
+    def retrieve(self, request,pk=None):
+        if request.user.is_staff :
+            return super().retrieve(request,pk)
+        else :
+            
+            return HttpResponse("You may not access directly database. You can access data with your machine id",status=405)
+        
+        
+ 
 class GPSFilter(django_filters.FilterSet):
     pub_date__gte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='gte')
     pub_date__lte = django_filters.DateTimeFilter(field_name="pub_date", lookup_expr='lte')
@@ -334,7 +380,7 @@ class SensorFilter(django_filters.FilterSet):
 class SensorViewset(ReadOnlyModelViewSet):
     queryset=Sensor.objects.all().order_by('pub_date')
     serializer_class=SensorSerializer
-    permission_classes=[AllowAny] # for 통신 테스트 with 고등기술연구원.
+    #permission_classes=[AllowAny] # for 통신 테스트 with 고등기술연구원.
     permission_classes=[AdminWriteOrUserReadOnly,]
     authentication_classes=[TokenAuthentication] 
     filter_backends=(DjangoFilterBackend,)
