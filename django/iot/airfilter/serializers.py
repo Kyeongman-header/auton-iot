@@ -1,6 +1,11 @@
 from .models import *
 from rest_framework import serializers
 
+class FilterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Filter
+        fields=['machine','filter_state_word','filter_state_grade','lastfilterchangedate','pub_date']
+
 class HoursSensorSerializer(serializers.ModelSerializer):
     class Meta:
         model=Hours_sensor
