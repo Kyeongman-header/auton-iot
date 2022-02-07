@@ -48,11 +48,14 @@ class OnlyMQTTSensorAdd(CreateAPIView,):
             serializer_sensor.save()
             _id=serializer_sensor.data['machine']
             m=Machine.objects.get(id=_id)
-            # 주의! 0이하의 gps 값은 unvalid값이다.
+            
 
             gps_format="SRID=4326;POINT (" + str(data['gps_x']) + " " + str(data['gps_y'])+")"
             _gps=gps_format # 저기 아래가 바로 여기임. mqtt로 전달된 데이터 중 gps 항목은 따로 떼어내서 gps 필드에 저장할 것이다.
-            update_airkorea(_gps,_id) # 이 gps값을 바탕으로 airkorea를 업데이트 해준다.
+            # (tg.latlng.lng<=132) && (tg.latlng.lng>=124) && (tg.latlng.lat<=43) && (tg.latlng.lat>=33)
+            # unvalid값은 airkorea를 업데이트하지 않는다. 
+            if float(data['gps_x'])>=124 and float(data['gps_x'])<=132 and float(data['gps_y'])<=43 and float(data['gps_y'])>=33:
+                update_airkorea(_gps,_id) # 이 gps값을 바탕으로 airkorea를 업데이트 해준다.
             m.gps_set.create(gps=_gps) # 그리고 gps 값도 역시나 GPS 필드에 따로 저장해준다.
             
             # 새롭게 들어온 sensor_data는 sensor orm에 새롭게 저장되었다. 이 가장 최근의 last 요소를 가지고 sensor에 대한 통계량들을 업데이트 해준다.(hours_sensor, days_sensor, weeks_sensor)
