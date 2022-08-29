@@ -20,6 +20,7 @@ import requests
 import hashlib
 import datetime
 from django.utils import timezone
+from .rul_estimator import *
 
 
 #필터링 위함.
@@ -294,7 +295,11 @@ class FilterViewset(ReadOnlyModelViewSet):
                 m=request.user.machine
             except :
                 return HttpResponse("No machine registered in that user.", status=405)
-            
+            queryset = m.airkorea_set.all()
+            df_airkorea = AirKoreaSerializer(queryset, many=True)
+            queryset = m.sensor_set.all()
+            df_sensor = SensorSerializer(queryset, many=True)
+            deeplearning(df_airkorea,df_sensor)
             filters=m.filter_set.last() # 실시간에서만 쓸 거니깐 가장 마지막 데이터만.
             #sensor_jsons=SensorSerializer(sensors).data
             
